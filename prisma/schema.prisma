@@ -1,0 +1,128 @@
+// Prisma schema for Stargate Web CMS
+// PT Stargate Pasific Resource
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum CategoryType {
+  PPM
+  CSR
+}
+
+enum GalleryType {
+  SOUVENIR
+  PENGHARGAAN
+}
+
+// ---------------------------------------------------------------------------
+// A. Beranda — Testimonial Slider
+// ---------------------------------------------------------------------------
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String
+  title     String
+  quote     String   @db.Text
+  imageUrl  String
+  createdAt DateTime @default(now())
+
+  @@map("testimonials")
+}
+
+// ---------------------------------------------------------------------------
+// B. Struktural — Bagan Organisasi
+// ---------------------------------------------------------------------------
+
+model Employee {
+  id       Int    @id @default(autoincrement())
+  name     String
+  position String
+  photoUrl String
+  sequence Int    @default(0)
+
+  @@index([sequence])
+  @@map("employees")
+}
+
+// ---------------------------------------------------------------------------
+// C. PPM & CSR — Blog / News
+// ---------------------------------------------------------------------------
+
+model Category {
+  id    Int          @id @default(autoincrement())
+  name  String
+  type  CategoryType
+  posts Post[]
+
+  @@map("categories")
+}
+
+model Post {
+  id           Int       @id @default(autoincrement())
+  title        String
+  slug         String    @unique
+  content      String    @db.Text
+  thumbnailUrl String
+  categoryId   Int
+  category     Category  @relation(fields: [categoryId], references: [id])
+  viewCount    Int       @default(0)
+  publishedAt  DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([viewCount])
+  @@index([publishedAt])
+  @@map("posts")
+}
+
+// ---------------------------------------------------------------------------
+// D. Binaan / Katalog UMKM
+// ---------------------------------------------------------------------------
+
+model BinaanGroup {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+
+  @@map("binaan_groups")
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  groupId     Int
+  group       BinaanGroup @relation(fields: [groupId], references: [id])
+  flavor      String?
+  description String      @db.Text
+  imageUrl    String
+  waNumber    String
+
+  @@index([groupId])
+  @@map("products")
+}
+
+// ---------------------------------------------------------------------------
+// E. Souvenir & Penghargaan — Galeri
+// ---------------------------------------------------------------------------
+
+model Gallery {
+  id       Int         @id @default(autoincrement())
+  title    String
+  type     GalleryType
+  period   String?
+  imageUrl String
+
+  @@index([type])
+  @@map("galleries")
+}
