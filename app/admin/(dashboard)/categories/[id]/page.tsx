@@ -11,8 +11,10 @@ export const metadata: Metadata = {
 
 export default async function EditCategoryPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { error?: string };
 }) {
   const category = await prisma.category.findUnique({
     where: { id: Number(params.id) },
@@ -25,6 +27,12 @@ export default async function EditCategoryPage({
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Edit Kategori</h1>
 
+      {searchParams.error === "duplicate" && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          Kategori dengan nama dan tipe yang sama sudah ada.
+        </p>
+      )}
+
       <form action={updateCategoryWithId} className="mt-6 space-y-4">
         <div>
           <label htmlFor="name" className={labelClass}>Nama Kategori</label>
@@ -36,6 +44,12 @@ export default async function EditCategoryPage({
             <option value="PPM">PPM</option>
             <option value="CSR">CSR</option>
           </select>
+        </div>
+        <div>
+          <label htmlFor="order" className={labelClass}>
+            Urutan <span className="font-normal text-slate-400">(angka lebih kecil tampil lebih dulu)</span>
+          </label>
+          <input id="order" name="order" type="number" defaultValue={category.order} className={inputClass} />
         </div>
 
         <div className="flex gap-3 pt-2">

@@ -7,10 +7,20 @@ export const metadata: Metadata = {
   title: "Tambah Kategori",
 };
 
-export default function NewCategoryPage() {
+export default function NewCategoryPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Kategori</h1>
+
+      {searchParams.error === "duplicate" && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          Kategori dengan nama dan tipe yang sama sudah ada.
+        </p>
+      )}
 
       <form action={createCategory} className="mt-6 space-y-4">
         <div>
@@ -23,6 +33,12 @@ export default function NewCategoryPage() {
             <option value="PPM">PPM</option>
             <option value="CSR">CSR</option>
           </select>
+        </div>
+        <div>
+          <label htmlFor="order" className={labelClass}>
+            Urutan <span className="font-normal text-slate-400">(angka lebih kecil tampil lebih dulu)</span>
+          </label>
+          <input id="order" name="order" type="number" defaultValue={0} className={inputClass} />
         </div>
 
         <div className="flex gap-3 pt-2">

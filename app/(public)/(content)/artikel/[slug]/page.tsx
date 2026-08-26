@@ -1,5 +1,6 @@
-import { Eye } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
@@ -41,12 +42,21 @@ export default async function ArticleDetailPage({
   const post = await getPost(params.slug);
   if (!post) notFound();
 
+  const backHref = post.category.type === "PPM" ? "/ppm" : "/csr";
+
   return (
-    <article>
-      <span className="inline-block rounded bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
+    <article className="mx-auto max-w-3xl">
+      <Link
+        href={backHref}
+        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand"
+      >
+        <ArrowLeft size={14} /> Kembali ke {post.category.type}
+      </Link>
+
+      <span className="inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
         {post.category.name}
       </span>
-      <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+      <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight text-slate-900 sm:text-4xl">
         {post.title}
       </h1>
       <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
@@ -68,7 +78,7 @@ export default async function ArticleDetailPage({
 
       {/* content is stored as HTML in the CMS */}
       <div
-        className="prose prose-slate mt-6 max-w-none"
+        className="prose prose-slate mt-8 max-w-none"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>

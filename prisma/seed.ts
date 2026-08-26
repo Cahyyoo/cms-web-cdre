@@ -22,16 +22,20 @@ async function main() {
     ],
   });
 
-  await prisma.employee.createMany({
+  await prisma.category.createMany({
     data: [
-      { name: "Andi Wijaya", position: "Manager External Relation", photoUrl: "https://picsum.photos/seed/emp1/300/300", sequence: 1 },
-      { name: "Rina Kusuma", position: "Supervisor CSR & PPM", photoUrl: "https://picsum.photos/seed/emp2/300/300", sequence: 2 },
-      { name: "Dedi Firmansyah", position: "Staff Community Relation", photoUrl: "https://picsum.photos/seed/emp3/300/300", sequence: 3 },
+      { name: "Pendidikan", type: "PPM", order: 1 },
+      { name: "Kesehatan", type: "PPM", order: 2 },
+      { name: "Peningkatan Pendapatan Rill", type: "PPM", order: 3 },
+      { name: "Kemandirian Ekonomi", type: "PPM", order: 4 },
+      { name: "Sosial Budaya", type: "PPM", order: 5 },
+      { name: "Lingkungan", type: "PPM", order: 6 },
+      { name: "Kelembagaan Masyarakat", type: "PPM", order: 7 },
+      { name: "Infrastruktur", type: "PPM", order: 8 },
     ],
   });
-
-  const ppmCategory = await prisma.category.create({
-    data: { name: "Pendidikan", type: "PPM" },
+  const ppmCategory = await prisma.category.findFirstOrThrow({
+    where: { name: "Pendidikan", type: "PPM" },
   });
   const csrCategory = await prisma.category.create({
     data: { name: "Lingkungan", type: "CSR" },
@@ -85,8 +89,18 @@ async function main() {
 
   await prisma.gallery.createMany({
     data: [
-      { title: "Souvenir Tahun 2024", type: "SOUVENIR", period: "2024", imageUrl: "https://picsum.photos/seed/gal1/500/500" },
       { title: "Penghargaan PROPER Hijau", type: "PENGHARGAAN", imageUrl: "https://picsum.photos/seed/gal2/500/500" },
+    ],
+  });
+
+  const kegiatanCategory = await prisma.activityCategory.create({
+    data: { name: "Pendidikan", order: 1 },
+  });
+
+  await prisma.activityPhoto.createMany({
+    data: [
+      { caption: "Bantuan sarana belajar", imageUrl: "https://picsum.photos/seed/act1/600/400", categoryId: kegiatanCategory.id, order: 1 },
+      { caption: "Kunjungan sekolah binaan", imageUrl: "https://picsum.photos/seed/act2/600/400", categoryId: kegiatanCategory.id, order: 2 },
     ],
   });
 

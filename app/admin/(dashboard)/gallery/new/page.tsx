@@ -1,28 +1,32 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createGalleryItem } from "../actions";
 
 export const metadata: Metadata = {
   title: "Tambah Item Galeri",
 };
 
-export default function NewGalleryItemPage() {
+export default function NewGalleryItemPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Item Galeri</h1>
+
+      {searchParams.error && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
 
       <form action={createGalleryItem} className="mt-6 space-y-4">
         <div>
           <label htmlFor="title" className={labelClass}>Judul</label>
           <input id="title" name="title" required className={inputClass} />
-        </div>
-        <div>
-          <label htmlFor="type" className={labelClass}>Tipe</label>
-          <select id="type" name="type" required className={inputClass} defaultValue="SOUVENIR">
-            <option value="SOUVENIR">Souvenir</option>
-            <option value="PENGHARGAAN">Penghargaan</option>
-          </select>
         </div>
         <div>
           <label htmlFor="period" className={labelClass}>
@@ -31,8 +35,22 @@ export default function NewGalleryItemPage() {
           <input id="period" name="period" placeholder="2024" className={inputClass} />
         </div>
         <div>
-          <label htmlFor="imageUrl" className={labelClass}>URL Gambar</label>
-          <input id="imageUrl" name="imageUrl" type="url" required placeholder="https://..." className={inputClass} />
+          <label htmlFor="photo" className={labelClass}>Gambar</label>
+          <input
+            id="photo"
+            name="photo"
+            type="file"
+            required
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className={fileInputClass}
+          />
+          <PhotoRequirements
+            items={[
+              "Format: JPG, PNG, WEBP, atau GIF",
+              "Ukuran file maksimal 5MB",
+              "Rasio bebas (potret/lanskap), minimal 600px pada sisi terpanjang",
+            ]}
+          />
         </div>
 
         <div className="flex gap-3 pt-2">

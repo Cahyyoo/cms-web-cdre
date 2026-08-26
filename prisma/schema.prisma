@@ -20,7 +20,6 @@ enum CategoryType {
 }
 
 enum GalleryType {
-  SOUVENIR
   PENGHARGAAN
 }
 
@@ -29,29 +28,15 @@ enum GalleryType {
 // ---------------------------------------------------------------------------
 
 model Testimonial {
-  id        Int      @id @default(autoincrement())
-  name      String
-  title     String
-  quote     String   @db.Text
-  imageUrl  String
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String
+  title       String
+  quote       String   @db.Text
+  imageUrl    String
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
 
   @@map("testimonials")
-}
-
-// ---------------------------------------------------------------------------
-// B. Struktural — Bagan Organisasi
-// ---------------------------------------------------------------------------
-
-model Employee {
-  id       Int    @id @default(autoincrement())
-  name     String
-  position String
-  photoUrl String
-  sequence Int    @default(0)
-
-  @@index([sequence])
-  @@map("employees")
 }
 
 // ---------------------------------------------------------------------------
@@ -62,8 +47,11 @@ model Category {
   id    Int          @id @default(autoincrement())
   name  String
   type  CategoryType
+  order Int          @default(0)
   posts Post[]
 
+  @@unique([name, type])
+  @@index([type, order])
   @@map("categories")
 }
 
@@ -113,7 +101,7 @@ model Product {
 }
 
 // ---------------------------------------------------------------------------
-// E. Souvenir & Penghargaan — Galeri
+// E. Penghargaan — Galeri
 // ---------------------------------------------------------------------------
 
 model Gallery {
@@ -125,4 +113,32 @@ model Gallery {
 
   @@index([type])
   @@map("galleries")
+}
+
+// ---------------------------------------------------------------------------
+// F. Galeri Kegiatan — per Kategori (Carousel)
+// ---------------------------------------------------------------------------
+
+model ActivityCategory {
+  id     Int             @id @default(autoincrement())
+  name   String          @unique
+  order  Int             @default(0)
+  photos ActivityPhoto[]
+
+  @@index([order])
+  @@map("activity_categories")
+}
+
+model ActivityPhoto {
+  id         Int              @id @default(autoincrement())
+  caption    String?
+  imageUrl   String
+  order      Int              @default(0)
+  categoryId Int
+  category   ActivityCategory @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime         @default(now())
+
+  @@index([categoryId])
+  @@index([order])
+  @@map("activity_photos")
 }

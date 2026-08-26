@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PostCard from "@/components/blog/PostCard";
 import Pagination from "@/components/blog/Pagination";
+import PageBanner from "@/components/ui/PageBanner";
 import { getPostsByType } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -22,19 +23,19 @@ export default async function CsrPage({
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">
-          CSR &mdash; Corporate Social Responsibility
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Berita dan publikasi program tanggung jawab sosial perusahaan.
-        </p>
-      </header>
+      <div className="mb-6">
+        <PageBanner
+          src="/banners/perbaikan-jalan-polora.jpg"
+          alt="Bantuan perbaikan jalan untuk masyarakat sekitar"
+          title="CSR — Corporate Social Responsibility"
+          subtitle="Berita dan publikasi program tanggung jawab sosial perusahaan."
+        />
+      </div>
 
       {posts.length === 0 ? (
         <p className="text-sm text-slate-400">Belum ada artikel untuk ditampilkan.</p>
       ) : (
-        <div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <PostCard
               key={post.id}

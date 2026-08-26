@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
-import { deleteTestimonial } from "./actions";
+import { deleteTestimonial, toggleTestimonialPublished } from "./actions";
 
 export const metadata: Metadata = {
   title: "Testimoni",
@@ -16,6 +16,7 @@ async function getTestimonials() {
 
 export default async function TestimonialsPage() {
   const testimonials = await getTestimonials();
+  const pendingCount = testimonials.filter((t) => !t.isPublished).length;
 
   return (
     <div>
@@ -24,6 +25,11 @@ export default async function TestimonialsPage() {
           <h1 className="text-xl font-bold text-slate-900">Testimoni</h1>
           <p className="mt-1 text-sm text-slate-500">
             Testimonial yang tampil di slider halaman Beranda.
+            {pendingCount > 0 && (
+              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                {pendingCount} menunggu moderasi
+              </span>
+            )}
           </p>
         </div>
         <Link
@@ -42,6 +48,7 @@ export default async function TestimonialsPage() {
               <th className="px-4 py-3">Nama</th>
               <th className="px-4 py-3">Jabatan</th>
               <th className="px-4 py-3">Quote</th>
+              <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Aksi</th>
             </tr>
           </thead>
@@ -67,6 +74,31 @@ export default async function TestimonialsPage() {
                   {item.quote}
                 </td>
                 <td className="px-4 py-3">
+                  <form
+                    action={toggleTestimonialPublished.bind(
+                      null,
+                      item.id,
+                      !item.isPublished
+                    )}
+                  >
+                    <button
+                      type="submit"
+                      className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        item.isPublished
+                          ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                          : "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                      }`}
+                      title={
+                        item.isPublished
+                          ? "Klik untuk menyembunyikan dari Beranda"
+                          : "Klik untuk menayangkan di Beranda"
+                      }
+                    >
+                      {item.isPublished ? "Tayang" : "Menunggu"}
+                    </button>
+                  </form>
+                </td>
+                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Link
                       href={`/admin/testimonials/${item.id}`}
@@ -81,7 +113,7 @@ export default async function TestimonialsPage() {
             ))}
             {testimonials.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
                   Belum ada testimoni.
                 </td>
               </tr>

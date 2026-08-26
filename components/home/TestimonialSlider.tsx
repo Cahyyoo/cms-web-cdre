@@ -26,9 +26,9 @@ export default function TestimonialSlider({
     setIndex((next + testimonials.length) % testimonials.length);
 
   return (
-    <div className="relative mx-auto max-w-3xl rounded-2xl bg-slate-50 p-8 text-center sm:p-12">
+    <div className="relative mx-auto max-w-3xl rounded-2xl bg-slate-50 p-10 text-center sm:p-14">
       <Quote className="mx-auto text-brand/30" size={36} />
-      <p className="mt-4 text-base italic leading-relaxed text-slate-700 sm:text-lg">
+      <p className="mt-5 font-serif text-xl font-medium leading-relaxed text-slate-800 sm:text-2xl">
         &ldquo;{current.quote}&rdquo;
       </p>
 

@@ -34,7 +34,7 @@ Portal website & CMS kustom untuk PT Stargate Pasific Resource. Dibangun dengan 
 
 ## Admin CMS (`/admin`)
 
-Panel admin untuk mengelola seluruh konten dinamis tanpa Prisma Studio: Testimoni, Struktur Organisasi (Employee), Kategori, Artikel PPM/CSR (Post), Kelompok Binaan, Produk, dan Galeri Souvenir/Penghargaan.
+Panel admin untuk mengelola seluruh konten dinamis tanpa Prisma Studio: Testimoni, Kategori, Artikel PPM/CSR (Post), Kelompok Binaan, Produk, Galeri Penghargaan, dan Galeri Kegiatan (kategori + foto carousel).
 
 - Login di `/admin/login` memakai `ADMIN_USERNAME`/`ADMIN_PASSWORD` dari `.env` (satu akun bersama, tidak ada tabel user).
 - Autentikasi berbasis cookie HttpOnly yang ditandatangani (HMAC, Web Crypto API) — lihat `lib/session.ts` dan `middleware.ts`. Middleware melindungi semua route `/admin/**` kecuali `/admin/login`.
@@ -46,15 +46,15 @@ Panel admin untuk mengelola seluruh konten dinamis tanpa Prisma Studio: Testimon
 
 ## Struktur Proyek
 
-- `prisma/schema.prisma` — Definisi seluruh model database (Testimonial, Employee, Category, Post, BinaanGroup, Product, Gallery).
+- `prisma/schema.prisma` — Definisi seluruh model database (Testimonial, Category, Post, BinaanGroup, Product, Gallery, ActivityCategory, ActivityPhoto).
 - `lib/prisma.ts` — Singleton Prisma Client.
 - `lib/session.ts` — Sesi admin (buat & verifikasi token bertanda tangan).
 - `lib/posts.ts`, `lib/utils.ts` — Helper query & formatting bersama.
 - `middleware.ts` — Menjaga akses ke `/admin/**`.
 - `app/layout.tsx` — Root layout (hanya `<html>/<body>`, tanpa chrome situs publik).
 - `app/(public)/layout.tsx` — Navbar + Footer publik, membungkus semua halaman pengunjung.
-- `app/(public)/(content)/` — Route group yang menerapkan grid dua kolom (konten 75% + `<Sidebar />` 25%): `ppm`, `csr`, `binaan`, `souvenir`, `penghargaan`, `artikel/[slug]`.
-- `app/(public)/struktural`, `sejarah`, `stakeholder`, `search` — Halaman publik full-width di luar grid dua kolom.
+- `app/(public)/(content)/` — Route group yang menerapkan grid dua kolom (konten 75% + `<Sidebar />` 25%): `ppm`, `csr`, `binaan`, `penghargaan`, `galeri-kegiatan`, `artikel/[slug]`.
+- `app/(public)/search` — Halaman publik full-width di luar grid dua kolom.
 - `app/admin/login/` — Halaman & Server Actions login/logout (di luar shell sidebar admin).
 - `app/admin/(dashboard)/` — Dashboard + CRUD tiap resource, dibungkus `components/admin/AdminSidebar.tsx`.
 - `components/admin/` — `AdminSidebar`, `DeleteButton` (tombol hapus + confirm), `formStyles.ts` (kelas Tailwind form bersama).

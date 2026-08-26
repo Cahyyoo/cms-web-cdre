@@ -7,15 +7,35 @@ export const metadata: Metadata = {
 };
 
 async function getCounts() {
-  const [testimonials, employees, posts, products, galleries] =
-    await Promise.all([
-      prisma.testimonial.count(),
-      prisma.employee.count(),
-      prisma.post.count(),
-      prisma.product.count(),
-      prisma.gallery.count(),
-    ]);
-  return { testimonials, employees, posts, products, galleries };
+  const [
+    testimonials,
+    categories,
+    posts,
+    binaanGroups,
+    products,
+    galleries,
+    activityCategories,
+    activityPhotos,
+  ] = await Promise.all([
+    prisma.testimonial.count(),
+    prisma.category.count(),
+    prisma.post.count(),
+    prisma.binaanGroup.count(),
+    prisma.product.count(),
+    prisma.gallery.count(),
+    prisma.activityCategory.count(),
+    prisma.activityPhoto.count(),
+  ]);
+  return {
+    testimonials,
+    categories,
+    posts,
+    binaanGroups,
+    products,
+    galleries,
+    activityCategories,
+    activityPhotos,
+  };
 }
 
 export default async function AdminDashboardPage() {
@@ -23,10 +43,13 @@ export default async function AdminDashboardPage() {
 
   const cards = [
     { label: "Testimoni", value: counts.testimonials, href: "/admin/testimonials" },
-    { label: "Karyawan (Struktural)", value: counts.employees, href: "/admin/employees" },
+    { label: "Kategori PPM & CSR", value: counts.categories, href: "/admin/categories" },
     { label: "Artikel PPM/CSR", value: counts.posts, href: "/admin/posts" },
+    { label: "Kelompok Binaan", value: counts.binaanGroups, href: "/admin/binaan-groups" },
     { label: "Produk Binaan", value: counts.products, href: "/admin/products" },
-    { label: "Item Galeri", value: counts.galleries, href: "/admin/gallery" },
+    { label: "Item Galeri Penghargaan", value: counts.galleries, href: "/admin/gallery" },
+    { label: "Kategori Kegiatan", value: counts.activityCategories, href: "/admin/activity-categories" },
+    { label: "Foto Galeri Kegiatan", value: counts.activityPhotos, href: "/admin/activity-gallery" },
   ];
 
   return (

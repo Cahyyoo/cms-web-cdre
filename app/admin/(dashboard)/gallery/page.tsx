@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { deleteGalleryItem } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Galeri Souvenir & Penghargaan",
+  title: "Galeri Penghargaan",
 };
 
 async function getGalleryItems() {
@@ -21,9 +21,9 @@ export default async function GalleryAdminPage() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Galeri Souvenir & Penghargaan</h1>
+          <h1 className="text-xl font-bold text-slate-900">Galeri Penghargaan</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Ditampilkan di /souvenir dan /penghargaan sesuai tipenya.
+            Ditampilkan di /penghargaan.
           </p>
         </div>
         <Link
@@ -40,7 +40,6 @@ export default async function GalleryAdminPage() {
             <tr>
               <th className="px-4 py-3">Gambar</th>
               <th className="px-4 py-3">Judul</th>
-              <th className="px-4 py-3">Tipe</th>
               <th className="px-4 py-3">Periode</th>
               <th className="px-4 py-3 text-right">Aksi</th>
             </tr>
@@ -54,11 +53,6 @@ export default async function GalleryAdminPage() {
                   </div>
                 </td>
                 <td className="px-4 py-3 font-medium text-slate-800">{item.title}</td>
-                <td className="px-4 py-3">
-                  <span className="rounded bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
-                    {item.type}
-                  </span>
-                </td>
                 <td className="px-4 py-3 text-slate-500">{item.period ?? "-"}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
@@ -75,7 +69,7 @@ export default async function GalleryAdminPage() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={4} className="px-4 py-8 text-center text-slate-400">
                   Belum ada item galeri.
                 </td>
               </tr>

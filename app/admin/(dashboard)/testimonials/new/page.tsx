@@ -1,16 +1,27 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createTestimonial } from "../actions";
 
 export const metadata: Metadata = {
   title: "Tambah Testimoni",
 };
 
-export default function NewTestimonialPage() {
+export default function NewTestimonialPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Testimoni</h1>
+
+      {searchParams.error && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
 
       <form action={createTestimonial} className="mt-6 space-y-4">
         <div>
@@ -26,8 +37,26 @@ export default function NewTestimonialPage() {
           <textarea id="quote" name="quote" required rows={4} className={inputClass} />
         </div>
         <div>
-          <label htmlFor="imageUrl" className={labelClass}>URL Foto Profil</label>
-          <input id="imageUrl" name="imageUrl" type="url" required placeholder="https://..." className={inputClass} />
+          <label htmlFor="photo" className={labelClass}>Foto Profil</label>
+          <input
+            id="photo"
+            name="photo"
+            type="file"
+            required
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className={fileInputClass}
+          />
+          <PhotoRequirements
+            items={[
+              "Format: JPG, PNG, WEBP, atau GIF",
+              "Ukuran file maksimal 5MB",
+              "Rasio persegi (1:1) disarankan, minimal 300x300px",
+            ]}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <input id="isPublished" name="isPublished" type="checkbox" defaultChecked className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
+          <label htmlFor="isPublished" className="text-sm text-slate-700">Tampilkan di halaman Beranda</label>
         </div>
 
         <div className="flex gap-3 pt-2">

@@ -1,38 +1,71 @@
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import Clock from "./Clock";
+import MobileMenu, { type NavGroup } from "./MobileMenu";
 import SearchBar from "./SearchBar";
 import { prisma } from "@/lib/prisma";
 
-const NAV_LINK_CLASS =
-  "px-3 py-3 text-sm font-medium text-slate-700 transition-colors hover:text-brand";
-
-async function getPpmCategories() {
-  return prisma.category.findMany({
-    where: { type: "PPM" },
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
-}
-
-async function getBinaanGroups() {
-  return prisma.binaanGroup.findMany({
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+async function getNavData() {
+  const [csrCategories, ppmCategories, binaanGroups, activityCategories] = await Promise.all([
+    prisma.category.findMany({
+      where: { type: "CSR" },
+      select: { id: true, name: true },
+      orderBy: [{ order: "asc" }, { name: "asc" }],
+    }),
+    prisma.category.findMany({
+      where: { type: "PPM" },
+      select: { id: true, name: true },
+      orderBy: [{ order: "asc" }, { name: "asc" }],
+    }),
+    prisma.binaanGroup.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.activityCategory.findMany({
+      select: { id: true, name: true },
+      orderBy: [{ order: "asc" }, { name: "asc" }],
+    }),
+  ]);
+  return { csrCategories, ppmCategories, binaanGroups, activityCategories };
 }
 
 export default async function Navbar() {
-  const [ppmCategories, binaanGroups] = await Promise.all([
-    getPpmCategories(),
-    getBinaanGroups(),
-  ]);
+  const { csrCategories, ppmCategories, binaanGroups, activityCategories } = await getNavData();
+
+  const navGroups: NavGroup[] = [
+    { label: "Beranda", href: "/" },
+    {
+      label: "CSR & PPM",
+      items: [
+        { label: "Semua Publikasi CSR", href: "/csr" },
+        ...csrCategories.map((c) => ({ label: c.name, href: `/csr?category=${c.id}` })),
+        { label: "Semua Program PPM", href: "/ppm" },
+        ...ppmCategories.map((c) => ({ label: c.name, href: `/ppm?category=${c.id}` })),
+      ],
+    },
+    {
+      label: "Binaan UMKM",
+      items: [
+        { label: "Semua Kelompok", href: "/binaan" },
+        ...binaanGroups.map((g) => ({ label: g.name, href: `/binaan?group=${g.id}` })),
+      ],
+    },
+    { label: "Penghargaan", href: "/penghargaan" },
+    {
+      label: "Galeri Kegiatan",
+      items: [
+        { label: "Semua Kegiatan", href: "/galeri-kegiatan" },
+        ...activityCategories.map((c) => ({
+          label: c.name,
+          href: `/galeri-kegiatan?category=${c.id}`,
+        })),
+      ],
+    },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-      {/* Top bar: logo, clock, search */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-md">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"
@@ -40,106 +73,50 @@ export default async function Navbar() {
             width={505}
             height={494}
             priority
-            className="h-14 w-auto object-contain"
+            className="h-10 w-auto object-contain sm:h-11"
           />
         </Link>
 
-        <div className="flex items-center gap-4">
-          <Clock />
+        {/* Desktop nav */}
+        <nav className="hidden lg:block">
+          <ul className="flex items-center">
+            {navGroups.map((group) =>
+              group.href ? (
+                <li key={group.label}>
+                  <Link
+                    href={group.href}
+                    className="px-4 py-2 text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-brand"
+                  >
+                    {group.label}
+                  </Link>
+                </li>
+              ) : (
+                <li key={group.label} className="group relative">
+                  <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-brand">
+                    {group.label} <ChevronDown size={14} />
+                  </button>
+                  <div className="invisible absolute left-0 top-full w-60 rounded-xl bg-white py-2 opacity-0 shadow-2xl ring-1 ring-slate-100 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                    {group.items?.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block px-5 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              )
+            )}
+          </ul>
+        </nav>
+
+        <div className="flex items-center gap-2">
           <SearchBar />
+          <MobileMenu groups={navGroups} />
         </div>
       </div>
-
-      {/* Horizontal navigation */}
-      <nav className="border-t border-slate-100">
-        <ul className="mx-auto flex max-w-7xl flex-wrap items-center px-4 sm:px-6 lg:px-8">
-          <li>
-            <Link href="/" className={NAV_LINK_CLASS}>
-              Beranda
-            </Link>
-          </li>
-          <li>
-            <Link href="/sejarah" className={NAV_LINK_CLASS}>
-              Sejarah
-            </Link>
-          </li>
-          <li>
-            <Link href="/struktural" className={NAV_LINK_CLASS}>
-              Struktural
-            </Link>
-          </li>
-
-          {/* PPM dropdown */}
-          <li className="group relative">
-            <button className={`flex items-center gap-1 ${NAV_LINK_CLASS}`}>
-              PPM <ChevronDown size={14} />
-            </button>
-            <div className="invisible absolute left-0 top-full w-48 rounded-md border border-slate-200 bg-white py-2 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
-              <Link
-                href="/ppm"
-                className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand"
-              >
-                Semua Program PPM
-              </Link>
-              {ppmCategories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/ppm?category=${category.id}`}
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand"
-                >
-                  {category.name}
-                </Link>
-              ))}
-            </div>
-          </li>
-
-          <li>
-            <Link href="/csr" className={NAV_LINK_CLASS}>
-              CSR
-            </Link>
-          </li>
-
-          {/* Binaan dropdown */}
-          <li className="group relative">
-            <button className={`flex items-center gap-1 ${NAV_LINK_CLASS}`}>
-              Binaan <ChevronDown size={14} />
-            </button>
-            <div className="invisible absolute left-0 top-full w-56 rounded-md border border-slate-200 bg-white py-2 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
-              <Link
-                href="/binaan"
-                className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand"
-              >
-                Semua Kelompok Binaan
-              </Link>
-              {binaanGroups.map((group) => (
-                <Link
-                  key={group.id}
-                  href={`/binaan?group=${group.id}`}
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-brand"
-                >
-                  {group.name}
-                </Link>
-              ))}
-            </div>
-          </li>
-
-          <li>
-            <Link href="/souvenir" className={NAV_LINK_CLASS}>
-              Souvenir
-            </Link>
-          </li>
-          <li>
-            <Link href="/penghargaan" className={NAV_LINK_CLASS}>
-              Penghargaan
-            </Link>
-          </li>
-          <li>
-            <Link href="/stakeholder" className={NAV_LINK_CLASS}>
-              Stakeholder
-            </Link>
-          </li>
-        </ul>
-      </nav>
     </header>
   );
 }

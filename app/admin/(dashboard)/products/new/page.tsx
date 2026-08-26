@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { createProduct } from "../actions";
 
@@ -12,12 +13,22 @@ async function getGroups() {
   return prisma.binaanGroup.findMany({ orderBy: { name: "asc" } });
 }
 
-export default async function NewProductPage() {
+export default async function NewProductPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
   const groups = await getGroups();
 
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Produk</h1>
+
+      {searchParams.error && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
 
       {groups.length === 0 ? (
         <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700">
@@ -53,8 +64,22 @@ export default async function NewProductPage() {
             <textarea id="description" name="description" required rows={4} className={inputClass} />
           </div>
           <div>
-            <label htmlFor="imageUrl" className={labelClass}>URL Foto Produk</label>
-            <input id="imageUrl" name="imageUrl" type="url" required placeholder="https://..." className={inputClass} />
+            <label htmlFor="photo" className={labelClass}>Foto Produk</label>
+            <input
+              id="photo"
+              name="photo"
+              type="file"
+              required
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className={fileInputClass}
+            />
+            <PhotoRequirements
+              items={[
+                "Format: JPG, PNG, WEBP, atau GIF",
+                "Ukuran file maksimal 5MB",
+                "Rasio persegi (1:1) disarankan, minimal 400x400px, latar bersih",
+              ]}
+            />
           </div>
           <div>
             <label htmlFor="waNumber" className={labelClass}>Nomor WhatsApp</label>

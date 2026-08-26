@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
+
+const sans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const serif = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+});
 
 // Nearly every route (public pages via Navbar/Sidebar, admin pages via
 // their data tables) queries the database on render. Force dynamic
@@ -13,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s | PT Stargate Pasific Resource",
   },
   description:
-    "Portal resmi PT Stargate Pasific Resource — program CSR, PPM, struktur organisasi, dan pemberdayaan UMKM binaan.",
+    "Publikasi resmi program CSR & PPM, serta pemberdayaan UMKM binaan PT Stargate Pasific Resource.",
 };
 
 export default function RootLayout({
@@ -22,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
-      <body className="min-h-screen bg-white text-slate-800 antialiased">
+    <html lang="id" className={`${sans.variable} ${serif.variable}`}>
+      <body className="min-h-screen bg-white font-sans text-slate-800 antialiased">
         {children}
       </body>
     </html>

@@ -1,0 +1,97 @@
+"use client";
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+type Photo = {
+  id: number;
+  imageUrl: string;
+  caption: string | null;
+};
+
+const AUTOPLAY_INTERVAL_MS = 5000;
+
+export default function ActivityCarousel({ photos }: { photos: Photo[] }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (photos.length <= 1 || paused) return;
+    const timer = setInterval(() => {
+      setIndex((cur) => (cur + 1) % photos.length);
+    }, AUTOPLAY_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [photos.length, paused]);
+
+  if (photos.length === 0) {
+    return <p className="text-sm text-slate-400">Belum ada foto untuk kategori ini.</p>;
+  }
+
+  const current = photos[index];
+  const goTo = (next: number) => setIndex((next + photos.length) % photos.length);
+
+  return (
+    <div
+      className="group relative overflow-hidden rounded-2xl bg-slate-100"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="relative aspect-[16/9] w-full">
+        {photos.map((photo, i) => (
+          <div
+            key={photo.id}
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              i === index ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          >
+            <Image
+              src={photo.imageUrl}
+              alt={photo.caption ?? "Dokumentasi kegiatan"}
+              fill
+              sizes="(min-width: 1024px) 800px, 100vw"
+              className="object-cover"
+              priority={i === 0}
+            />
+          </div>
+        ))}
+        {current.caption && (
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-4">
+            <p className="text-sm font-medium text-white">{current.caption}</p>
+          </div>
+        )}
+      </div>
+
+      {photos.length > 1 && (
+        <>
+          <button
+            onClick={() => goTo(index - 1)}
+            aria-label="Foto sebelumnya"
+            className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-white"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={() => goTo(index + 1)}
+            aria-label="Foto berikutnya"
+            className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-white"
+          >
+            <ChevronRight size={18} />
+          </button>
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+            {photos.map((photo, i) => (
+              <button
+                key={photo.id}
+                onClick={() => goTo(i)}
+                aria-label={`Foto ${i + 1}`}
+                className={`h-1.5 rounded-full transition-all ${
+                  i === index ? "w-5 bg-white" : "w-1.5 bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

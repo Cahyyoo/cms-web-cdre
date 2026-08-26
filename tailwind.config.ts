@@ -15,6 +15,10 @@ const config: Config = {
           accent: "#0EA5E9",
         },
       },
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+      },
     },
   },
   plugins: [],

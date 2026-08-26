@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 async function getCategories() {
   return prisma.category.findMany({
     include: { _count: { select: { posts: true } } },
-    orderBy: { name: "asc" },
+    orderBy: [{ type: "asc" }, { order: "asc" }, { name: "asc" }],
   });
 }
 
@@ -50,6 +50,7 @@ export default async function CategoriesPage({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-slate-100 text-xs uppercase text-slate-400">
             <tr>
+              <th className="px-4 py-3">Urutan</th>
               <th className="px-4 py-3">Nama</th>
               <th className="px-4 py-3">Tipe</th>
               <th className="px-4 py-3">Jumlah Artikel</th>
@@ -59,6 +60,7 @@ export default async function CategoriesPage({
           <tbody className="divide-y divide-slate-100">
             {categories.map((item) => (
               <tr key={item.id}>
+                <td className="px-4 py-3 text-slate-500">{item.order}</td>
                 <td className="px-4 py-3 font-medium text-slate-800">{item.name}</td>
                 <td className="px-4 py-3">
                   <span className="rounded bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
@@ -81,7 +83,7 @@ export default async function CategoriesPage({
             ))}
             {categories.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
                   Belum ada kategori.
                 </td>
               </tr>

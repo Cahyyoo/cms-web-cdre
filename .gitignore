@@ -17,5 +17,8 @@
 *.pem
 npm-debug.log*
 
+# user-uploaded content (runtime data, not source)
+/public/uploads/
+
 # typescript
 *.tsbuildinfo

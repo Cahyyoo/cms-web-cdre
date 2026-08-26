@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateProduct } from "../actions";
 
@@ -11,8 +13,10 @@ export const metadata: Metadata = {
 
 export default async function EditProductPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { error?: string };
 }) {
   const [product, groups] = await Promise.all([
     prisma.product.findUnique({ where: { id: Number(params.id) } }),
@@ -25,6 +29,12 @@ export default async function EditProductPage({
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Edit Produk</h1>
+
+      {searchParams.error && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
 
       <form action={updateProductWithId} className="mt-6 space-y-4">
         <div>
@@ -49,9 +59,31 @@ export default async function EditProductPage({
           <label htmlFor="description" className={labelClass}>Deskripsi</label>
           <textarea id="description" name="description" required rows={4} defaultValue={product.description} className={inputClass} />
         </div>
+
         <div>
-          <label htmlFor="imageUrl" className={labelClass}>URL Foto Produk</label>
-          <input id="imageUrl" name="imageUrl" type="url" required defaultValue={product.imageUrl} className={inputClass} />
+          <span className={labelClass}>Foto Saat Ini</span>
+          <div className="relative h-16 w-16 overflow-hidden rounded-md bg-slate-100">
+            <Image src={product.imageUrl} alt={product.name} fill sizes="64px" className="object-cover" />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="photo" className={labelClass}>
+            Ganti Foto <span className="font-normal text-slate-400">(kosongkan jika tidak diganti)</span>
+          </label>
+          <input
+            id="photo"
+            name="photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className={fileInputClass}
+          />
+          <PhotoRequirements
+            items={[
+              "Format: JPG, PNG, WEBP, atau GIF",
+              "Ukuran file maksimal 5MB",
+              "Rasio persegi (1:1) disarankan, minimal 400x400px, latar bersih",
+            ]}
+          />
         </div>
         <div>
           <label htmlFor="waNumber" className={labelClass}>Nomor WhatsApp</label>

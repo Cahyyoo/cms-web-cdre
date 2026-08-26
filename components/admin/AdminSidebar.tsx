@@ -2,6 +2,7 @@ import {
   FileText,
   Images,
   LayoutDashboard,
+  Layers,
   LogOut,
   MessageSquareQuote,
   Package,
@@ -17,10 +18,9 @@ const NAV_GROUPS = [
     items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboard }],
   },
   {
-    label: "Beranda & Struktural",
+    label: "Beranda",
     items: [
       { href: "/admin/testimonials", label: "Testimoni", icon: MessageSquareQuote },
-      { href: "/admin/employees", label: "Struktur Organisasi", icon: Users },
     ],
   },
   {
@@ -39,7 +39,14 @@ const NAV_GROUPS = [
   },
   {
     label: "Galeri",
-    items: [{ href: "/admin/gallery", label: "Souvenir & Penghargaan", icon: Images }],
+    items: [{ href: "/admin/gallery", label: "Penghargaan", icon: Images }],
+  },
+  {
+    label: "Galeri Kegiatan",
+    items: [
+      { href: "/admin/activity-categories", label: "Kategori Kegiatan", icon: Layers },
+      { href: "/admin/activity-gallery", label: "Foto Kegiatan", icon: Images },
+    ],
   },
 ];
 

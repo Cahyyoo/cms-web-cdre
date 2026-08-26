@@ -1,6 +1,7 @@
 import { MessageCircle } from "lucide-react";
 import Image from "next/image";
 import type { Metadata } from "next";
+import PageBanner from "@/components/ui/PageBanner";
 import { prisma } from "@/lib/prisma";
 import { buildWhatsAppLink } from "@/lib/utils";
 
@@ -37,13 +38,14 @@ export default async function BinaanPage({
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Binaan UMKM</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Produk-produk dari kelompok UMKM binaan PT Stargate Pasific
-          Resource.
-        </p>
-      </header>
+      <div className="mb-6">
+        <PageBanner
+          src="/banners/parcel-lebaran.jpg"
+          alt="Penyaluran bantuan parcel Lebaran kepada masyarakat sekitar"
+          title="Binaan UMKM"
+          subtitle="Produk-produk dari kelompok UMKM binaan PT Stargate Pasific Resource."
+        />
+      </div>
 
       {/* Group filter */}
       <div className="mb-6 flex flex-wrap gap-2">
