@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { formatDate, formatViews } from "@/lib/utils";
 
 // `generateMetadata` and the page both need the article; React's `cache`
@@ -83,10 +84,10 @@ export default async function ArticleDetailPage({
         />
       </div>
 
-      {/* content is stored as HTML in the CMS */}
+      {/* Stored as CKEditor HTML; sanitised on render — see lib/sanitize.ts */}
       <div
         className="prose prose-slate mt-8 max-w-none"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(post.content) }}
       />
     </article>
   );

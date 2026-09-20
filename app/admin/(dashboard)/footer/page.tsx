@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { inputClass, labelClass } from "@/components/admin/formStyles";
 import { getFooterSettings } from "@/lib/footer-settings";
 import { updateFooterSettings } from "./actions";
-import SubmitButton from "@/components/admin/SubmitButton";
-import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Footer",

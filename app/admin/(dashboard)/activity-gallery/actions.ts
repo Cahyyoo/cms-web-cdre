@@ -4,15 +4,16 @@ import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
+import { readInt, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/activity-gallery";
 
 function readFields(formData: FormData) {
-  const caption = String(formData.get("caption") ?? "").trim();
+  const caption = readString(formData, "caption");
   return {
     caption: caption ? caption : null,
-    categoryId: Number(formData.get("categoryId") ?? 0),
-    order: Number(formData.get("order") ?? 0) || 0,
+    categoryId: readInt(formData, "categoryId"),
+    order: readInt(formData, "order"),
   };
 }
 

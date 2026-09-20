@@ -1,5 +1,6 @@
-import { CheckCircle2 } from "lucide-react";
 import type { Metadata } from "next";
+import SubmitButton from "@/components/ui/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
 import { submitTestimonial } from "./actions";
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ const labelClass = "mb-1 block text-sm font-medium text-slate-700";
 export default function TestimoniFormPage({
   searchParams,
 }: {
-  searchParams: { submitted?: string; error?: string };
+  searchParams: { flash?: string };
 }) {
   return (
     <div className="mx-auto max-w-xl px-4 py-14 sm:px-6 lg:px-8">
@@ -28,23 +29,7 @@ export default function TestimoniFormPage({
         di halaman Beranda.
       </p>
 
-      {searchParams.submitted && (
-        <div className="mt-6 flex items-start gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
-          <span>
-            Terima kasih! Testimoni Anda sudah kami terima dan akan tayang
-            setelah disetujui oleh tim kami.
-          </span>
-        </div>
-      )}
-
-      {searchParams.error && (
-        <p className="mt-6 rounded-md bg-red-50 px-4 py-3 text-sm text-red-600">
-          {searchParams.error === "1"
-            ? "Nama, jabatan/instansi, dan isi testimoni wajib diisi."
-            : searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={submitTestimonial} className="mt-8 space-y-4">
         <div>
@@ -94,12 +79,12 @@ export default function TestimoniFormPage({
           />
         </div>
 
-        <button
-          type="submit"
+        <SubmitButton
+          pendingLabel="Mengirim..."
           className="w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
         >
           Kirim Testimoni
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

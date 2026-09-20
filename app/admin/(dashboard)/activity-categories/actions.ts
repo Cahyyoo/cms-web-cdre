@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { readInt, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/activity-categories";
 
@@ -12,8 +13,8 @@ const IN_USE = { "in-use": "in-use-activity-category" } as const;
 
 function readFields(formData: FormData) {
   return {
-    name: String(formData.get("name") ?? ""),
-    order: Number(formData.get("order") ?? 0) || 0,
+    name: readString(formData, "name"),
+    order: readInt(formData, "order"),
   };
 }
 

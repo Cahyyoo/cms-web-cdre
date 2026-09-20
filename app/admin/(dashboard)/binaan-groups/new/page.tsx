@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createBinaanGroup } from "../actions";
-import SubmitButton from "@/components/admin/SubmitButton";
-import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Tambah Kelompok Binaan",

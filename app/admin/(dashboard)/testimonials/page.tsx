@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteTestimonial, toggleTestimonialPublished } from "./actions";
-import FormAlert from "@/components/admin/FormAlert";
+import FormAlert from "@/components/ui/FormAlert";
 import PublishToggle from "@/components/admin/PublishToggle";
 
 export const metadata: Metadata = {

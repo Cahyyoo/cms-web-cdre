@@ -5,6 +5,7 @@ import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
 import { slugify } from "@/lib/utils";
+import { readInt, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/posts";
 
@@ -14,11 +15,11 @@ const SLUG_CLASH = { duplicate: "duplicate-slug" } as const;
 
 function readFields(formData: FormData) {
   return {
-    title: String(formData.get("title") ?? ""),
-    slug: String(formData.get("slug") ?? ""),
-    content: String(formData.get("content") ?? ""),
-    categoryId: Number(formData.get("categoryId") ?? 0),
-    publishedAt: new Date(String(formData.get("publishedAt") ?? "")),
+    title: readString(formData, "title"),
+    slug: readString(formData, "slug"),
+    content: readString(formData, "content"),
+    categoryId: readInt(formData, "categoryId"),
+    publishedAt: new Date(readString(formData, "publishedAt")),
   };
 }
 

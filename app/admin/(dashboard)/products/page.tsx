@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteProduct } from "./actions";
-import FormAlert from "@/components/admin/FormAlert";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Produk Binaan",

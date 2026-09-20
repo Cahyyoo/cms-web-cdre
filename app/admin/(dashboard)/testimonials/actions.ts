@@ -4,15 +4,16 @@ import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
+import { readBoolean, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/testimonials";
 
 function readFields(formData: FormData) {
   return {
-    name: String(formData.get("name") ?? ""),
-    title: String(formData.get("title") ?? ""),
-    quote: String(formData.get("quote") ?? ""),
-    isPublished: formData.get("isPublished") === "on",
+    name: readString(formData, "name"),
+    title: readString(formData, "title"),
+    quote: readString(formData, "quote"),
+    isPublished: readBoolean(formData, "isPublished"),
   };
 }
 

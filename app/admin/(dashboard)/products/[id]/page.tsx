@@ -6,8 +6,9 @@ import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateProduct } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { parseId } from "@/lib/forms";
 
 export const metadata: Metadata = {
   title: "Edit Produk",
@@ -20,8 +21,11 @@ export default async function EditProductPage({
   params: { id: string };
   searchParams: { flash?: string };
 }) {
+  const id = parseId(params.id);
+  if (id === null) notFound();
+
   const [product, groups] = await Promise.all([
-    prisma.product.findUnique({ where: { id: Number(params.id) } }),
+    prisma.product.findUnique({ where: { id } }),
     prisma.binaanGroup.findMany({ orderBy: { name: "asc" } }),
   ]);
   if (!product) notFound();

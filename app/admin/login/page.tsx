@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
 import { login } from "./actions";
 
 export const metadata: Metadata = {

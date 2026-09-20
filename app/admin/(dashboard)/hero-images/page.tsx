@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { HERO_SLOT_ORDER, HERO_SLOTS } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
-import FormAlert from "@/components/admin/FormAlert";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Gambar Hero & Banner",

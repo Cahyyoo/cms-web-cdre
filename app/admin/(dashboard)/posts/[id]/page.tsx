@@ -8,8 +8,9 @@ import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/
 import { prisma } from "@/lib/prisma";
 import { toDateInputValue } from "@/lib/utils";
 import { updatePost } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { parseId } from "@/lib/forms";
 
 export const metadata: Metadata = {
   title: "Edit Artikel",
@@ -22,8 +23,11 @@ export default async function EditPostPage({
   params: { id: string };
   searchParams: { flash?: string };
 }) {
+  const id = parseId(params.id);
+  if (id === null) notFound();
+
   const [post, categories] = await Promise.all([
-    prisma.post.findUnique({ where: { id: Number(params.id) } }),
+    prisma.post.findUnique({ where: { id } }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
   ]);
   if (!post) notFound();

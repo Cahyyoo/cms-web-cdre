@@ -8,8 +8,8 @@ import { fileInputClass, labelClass, secondaryButtonClass } from "@/components/a
 import { HERO_SLOTS } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 import { updateHeroImage } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Ganti Gambar Hero/Banner",

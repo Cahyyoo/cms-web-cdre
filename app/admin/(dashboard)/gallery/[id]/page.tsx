@@ -6,8 +6,9 @@ import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateGalleryItem } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { parseId } from "@/lib/forms";
 
 export const metadata: Metadata = {
   title: "Edit Item Galeri",
@@ -20,8 +21,11 @@ export default async function EditGalleryItemPage({
   params: { id: string };
   searchParams: { flash?: string };
 }) {
+  const id = parseId(params.id);
+  if (id === null) notFound();
+
   const item = await prisma.gallery.findUnique({
-    where: { id: Number(params.id) },
+    where: { id },
   });
   if (!item) notFound();
 

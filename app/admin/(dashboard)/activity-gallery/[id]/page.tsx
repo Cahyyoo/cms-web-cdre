@@ -6,8 +6,9 @@ import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateActivityPhoto } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import { parseId } from "@/lib/forms";
 
 export const metadata: Metadata = {
   title: "Edit Foto Kegiatan",
@@ -20,8 +21,11 @@ export default async function EditActivityPhotoPage({
   params: { id: string };
   searchParams: { flash?: string };
 }) {
+  const id = parseId(params.id);
+  if (id === null) notFound();
+
   const [item, categories] = await Promise.all([
-    prisma.activityPhoto.findUnique({ where: { id: Number(params.id) } }),
+    prisma.activityPhoto.findUnique({ where: { id } }),
     prisma.activityCategory.findMany({ orderBy: [{ order: "asc" }, { name: "asc" }] }),
   ]);
   if (!item) notFound();

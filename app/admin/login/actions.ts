@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { withFlash } from "@/lib/flash";
+import { readString } from "@/lib/forms";
 import {
   createSessionToken,
   isSecureCookie,
@@ -21,9 +22,9 @@ function safeNextPath(next: string): string {
 }
 
 export async function login(formData: FormData) {
-  const username = String(formData.get("username") ?? "");
-  const password = String(formData.get("password") ?? "");
-  const next = safeNextPath(String(formData.get("next") ?? "/admin"));
+  const username = readString(formData, "username");
+  const password = readString(formData, "password");
+  const next = safeNextPath(readString(formData, "next") || "/admin");
 
   const validUsername = process.env.ADMIN_USERNAME;
   const validPassword = process.env.ADMIN_PASSWORD;

@@ -4,17 +4,18 @@ import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
+import { readInt, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/products";
 
 function readFields(formData: FormData) {
-  const flavor = String(formData.get("flavor") ?? "").trim();
+  const flavor = readString(formData, "flavor");
   return {
-    name: String(formData.get("name") ?? ""),
-    groupId: Number(formData.get("groupId") ?? 0),
+    name: readString(formData, "name"),
+    groupId: readInt(formData, "groupId"),
     flavor: flavor ? flavor : null,
-    description: String(formData.get("description") ?? ""),
-    waNumber: String(formData.get("waNumber") ?? ""),
+    description: readString(formData, "description"),
+    waNumber: readString(formData, "waNumber"),
   };
 }
 

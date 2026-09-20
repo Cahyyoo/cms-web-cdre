@@ -2,16 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { withFlash } from "@/lib/flash";
 import { prisma } from "@/lib/prisma";
 import { getOptionalFile, saveUploadedImage, UploadError } from "@/lib/upload";
+import { readString } from "@/lib/forms";
 
 export async function submitTestimonial(formData: FormData) {
-  const name = String(formData.get("name") ?? "").trim();
-  const title = String(formData.get("title") ?? "").trim();
-  const quote = String(formData.get("quote") ?? "").trim();
+  const name = readString(formData, "name");
+  const title = readString(formData, "title");
+  const quote = readString(formData, "quote");
 
   if (!name || !title || !quote) {
-    redirect("/testimoni?error=1");
+    redirect(withFlash("/testimoni", "testimoni-wajib"));
   }
 
   let imageUrl = "/avatar-placeholder.svg";
@@ -21,7 +23,7 @@ export async function submitTestimonial(formData: FormData) {
       imageUrl = await saveUploadedImage(photo, "testimonials");
     } catch (error) {
       if (error instanceof UploadError) {
-        redirect(`/testimoni?error=${encodeURIComponent(error.message)}`);
+        redirect(withFlash("/testimoni", error.code));
       }
       throw error;
     }
@@ -34,5 +36,5 @@ export async function submitTestimonial(formData: FormData) {
   });
 
   revalidatePath("/admin/testimonials");
-  redirect("/testimoni?submitted=1");
+  redirect(withFlash("/testimoni", "testimoni-terkirim"));
 }

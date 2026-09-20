@@ -4,8 +4,9 @@ import type { Metadata } from "next";
 import { inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateBinaanGroup } from "../actions";
-import SubmitButton from "@/components/admin/SubmitButton";
-import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import { parseId } from "@/lib/forms";
 
 export const metadata: Metadata = {
   title: "Edit Kelompok Binaan",
@@ -18,8 +19,11 @@ export default async function EditBinaanGroupPage({
   params: { id: string };
   searchParams: { flash?: string };
 }) {
+  const id = parseId(params.id);
+  if (id === null) notFound();
+
   const group = await prisma.binaanGroup.findUnique({
-    where: { id: Number(params.id) },
+    where: { id },
   });
   if (!group) notFound();
 

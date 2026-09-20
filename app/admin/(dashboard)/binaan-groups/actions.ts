@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/binaan-groups";
 
@@ -22,7 +23,7 @@ export async function createBinaanGroup(formData: FormData) {
     { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created" },
     async () => {
       await prisma.binaanGroup.create({
-        data: { name: String(formData.get("name") ?? "") },
+        data: { name: readString(formData, "name") },
       });
       revalidate();
     }
@@ -35,7 +36,7 @@ export async function updateBinaanGroup(id: number, formData: FormData) {
     async () => {
       await prisma.binaanGroup.update({
         where: { id },
-        data: { name: String(formData.get("name") ?? "") },
+        data: { name: readString(formData, "name") },
       });
       revalidate();
     }

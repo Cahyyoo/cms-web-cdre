@@ -5,7 +5,7 @@ import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatViews } from "@/lib/utils";
 import { deletePost } from "./actions";
-import FormAlert from "@/components/admin/FormAlert";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Artikel PPM & CSR",

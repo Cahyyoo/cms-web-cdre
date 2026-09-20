@@ -4,13 +4,14 @@ import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
+import { readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/gallery";
 
 function readFields(formData: FormData) {
-  const period = String(formData.get("period") ?? "").trim();
+  const period = readString(formData, "period");
   return {
-    title: String(formData.get("title") ?? ""),
+    title: readString(formData, "title"),
     type: "PENGHARGAAN" as const,
     period: period ? period : null,
   };

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { inputClass, labelClass } from "@/components/admin/formStyles";
 import { getSambutan } from "@/lib/sambutan";
 import { updateSambutan } from "./actions";
-import SubmitButton from "@/components/admin/SubmitButton";
-import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
 
 export const metadata: Metadata = {
   title: "Sambutan",

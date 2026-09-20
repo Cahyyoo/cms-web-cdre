@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/footer";
 
@@ -12,13 +13,13 @@ export async function updateFooterSettings(formData: FormData) {
     { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "updated" },
     async () => {
       const data = {
-        description: String(formData.get("description") ?? "").trim(),
-        address: String(formData.get("address") ?? "").trim(),
-        phone: String(formData.get("phone") ?? "").trim(),
-        email: String(formData.get("email") ?? "").trim(),
-        facebookUrl: String(formData.get("facebookUrl") ?? "").trim() || "#",
-        instagramUrl: String(formData.get("instagramUrl") ?? "").trim() || "#",
-        youtubeUrl: String(formData.get("youtubeUrl") ?? "").trim() || "#",
+        description: readString(formData, "description"),
+        address: readString(formData, "address"),
+        phone: readString(formData, "phone"),
+        email: readString(formData, "email"),
+        facebookUrl: readString(formData, "facebookUrl") || "#",
+        instagramUrl: readString(formData, "instagramUrl") || "#",
+        youtubeUrl: readString(formData, "youtubeUrl") || "#",
       };
 
       await prisma.footerSettings.upsert({

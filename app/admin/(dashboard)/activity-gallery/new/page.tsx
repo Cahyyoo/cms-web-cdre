@@ -4,8 +4,8 @@ import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { createActivityPhoto } from "../actions";
-import FormAlert from "@/components/admin/FormAlert";
-import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/ui/FormAlert";
+import SubmitButton from "@/components/ui/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Tambah Foto Kegiatan",
