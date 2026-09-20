@@ -12,7 +12,13 @@ const nextConfig = {
     // that used to sit in this list let anyone use /_next/image as an open
     // image proxy for arbitrary hosts — add specific CDN/storage hostnames
     // here instead if content ever moves off local disk.
-    remotePatterns: [],
+    //
+    // picsum.photos is NOT referenced anywhere in the source: the URLs are
+    // seed data stored in the database (testimonials, products, posts and
+    // galleries). Removing this entry makes those rows throw "Invalid src
+    // prop" and returns 500 on the homepage, so grep the DB, not just the
+    // code, before dropping it.
+    remotePatterns: [{ protocol: "https", hostname: "picsum.photos" }],
     // WebP only: AVIF encodes 5-10x slower and this runs on a single
     // self-hosted box where the optimizer competes with the app for CPU.
     formats: ["image/webp"],
