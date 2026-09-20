@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import BinaanTeaser from "@/components/home/BinaanTeaser";
@@ -67,7 +68,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <StatsBar />
+      {/*
+        These three sibling components each run their own queries. Without a
+        Suspense boundary React awaits them in render order and the latencies
+        stack; with one they stream in parallel and the hero paints first.
+      */}
+      <Suspense fallback={<div className="h-28 bg-slate-50" />}>
+        <StatsBar />
+      </Suspense>
 
       {/* Sambutan */}
       <section className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 py-24 sm:px-6 md:grid-cols-2 lg:px-8">
@@ -99,8 +107,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <FeaturedPosts />
-      <BinaanTeaser />
+      <Suspense fallback={<div className="h-96" />}>
+        <FeaturedPosts />
+      </Suspense>
+      <Suspense fallback={<div className="h-96 bg-slate-50" />}>
+        <BinaanTeaser />
+      </Suspense>
 
       {/* Testimonial */}
       <section className="py-24">

@@ -1,8 +1,9 @@
 "use server";
 
 import { HeroSlot } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
 
@@ -40,6 +41,7 @@ export async function updateHeroImage(slot: HeroSlot, formData: FormData) {
         await deleteUploadedImage(current?.imageUrl);
       }
 
+      revalidateTag(CACHE_TAGS.hero);
       revalidatePath(ADMIN_PATH);
       revalidatePath(REVALIDATE_PATH[slot]);
     }

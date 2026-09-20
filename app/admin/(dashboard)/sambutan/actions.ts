@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 const ADMIN_PATH = "/admin/sambutan";
@@ -19,6 +20,7 @@ export async function updateSambutan(formData: FormData) {
         update: { quote, description },
       });
 
+      revalidateTag(CACHE_TAGS.sambutan);
       revalidatePath(ADMIN_PATH);
       revalidatePath("/");
     }

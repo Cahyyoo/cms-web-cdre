@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 const ADMIN_PATH = "/admin/binaan-groups";
@@ -9,6 +10,7 @@ const ADMIN_PATH = "/admin/binaan-groups";
 const IN_USE = { "in-use": "in-use-binaan-group" } as const;
 
 function revalidate() {
+  revalidateTag(CACHE_TAGS.nav);
   revalidatePath(ADMIN_PATH);
   revalidatePath("/binaan");
 }

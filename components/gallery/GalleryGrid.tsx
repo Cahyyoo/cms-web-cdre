@@ -2,10 +2,15 @@ import Image from "next/image";
 import type { GalleryType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
+/** This grid has no pagination, so the query needs its own ceiling. */
+const MAX_ITEMS = 60;
+
 async function getGalleryItems(type: GalleryType) {
   return prisma.gallery.findMany({
     where: { type },
+    select: { id: true, title: true, period: true, imageUrl: true },
     orderBy: { id: "desc" },
+    take: MAX_ITEMS,
   });
 }
 

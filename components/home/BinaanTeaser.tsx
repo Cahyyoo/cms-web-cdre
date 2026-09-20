@@ -5,7 +5,14 @@ import { prisma } from "@/lib/prisma";
 
 async function getLatestProducts() {
   return prisma.product.findMany({
-    include: { group: true },
+    // The teaser shows an image, a name and a group name; `include` also
+    // fetched Product.description, which is @db.Text.
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      group: { select: { name: true } },
+    },
     orderBy: { id: "desc" },
     take: 4,
   });

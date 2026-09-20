@@ -9,12 +9,22 @@ export const metadata: Metadata = {
   description: "Dokumentasi kegiatan PT Stargate Pasific Resource per kategori.",
 };
 
+/**
+ * Every photo of every category used to be loaded and serialized into the RSC
+ * payload for the carousels, growing without bound as the archive grew.
+ */
+const MAX_PHOTOS_PER_CATEGORY = 20;
+
 async function getActivityCategories(categoryId?: number) {
   return prisma.activityCategory.findMany({
     where: categoryId ? { id: categoryId } : undefined,
-    include: {
+    select: {
+      id: true,
+      name: true,
       photos: {
+        select: { id: true, imageUrl: true, caption: true },
         orderBy: [{ order: "asc" }, { id: "asc" }],
+        take: MAX_PHOTOS_PER_CATEGORY,
       },
     },
     orderBy: [{ order: "asc" }, { name: "asc" }],

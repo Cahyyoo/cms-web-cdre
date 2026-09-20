@@ -46,6 +46,8 @@ model Testimonial {
   isPublished Boolean  @default(true)
   createdAt   DateTime @default(now())
 
+  // Homepage: where isPublished order by createdAt desc
+  @@index([isPublished, createdAt])
   @@map("testimonials")
 }
 
@@ -79,8 +81,12 @@ model Post {
   updatedAt    DateTime  @updatedAt
 
   @@index([categoryId])
-  @@index([viewCount])
   @@index([publishedAt])
+  // getPostsByType filters by category then sorts publishedAt desc; the
+  // single-column indexes left MySQL to filesort.
+  @@index([categoryId, publishedAt])
+  // NOTE: @@index([viewCount]) was dropped — nothing filters or sorts by it,
+  // but it cost a B-tree write on every article view.
   @@map("posts")
 }
 
@@ -149,7 +155,9 @@ model ActivityPhoto {
   createdAt  DateTime         @default(now())
 
   @@index([categoryId])
-  @@index([order])
+  // The real query is "photos of one category, ordered by order" — a separate
+  // index on `order` alone could not serve it.
+  @@index([categoryId, order])
   @@map("activity_photos")
 }
 

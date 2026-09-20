@@ -23,6 +23,32 @@ function buildHref(
   return `${basePath}?${params.toString()}`;
 }
 
+/** Page numbers rendered at once, excluding the first/last anchors. */
+const WINDOW = 5;
+
+/**
+ * Page numbers to render: always the first and last, a window around the
+ * current page, and an ellipsis for each gap. Rendering every number meant a
+ * 400-post section put 50 links in the DOM of every list page.
+ */
+function pageItems(page: number, totalPages: number): (number | "gap")[] {
+  if (totalPages <= WINDOW + 2) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const half = Math.floor(WINDOW / 2);
+  let start = Math.max(2, page - half);
+  let end = Math.min(totalPages - 1, start + WINDOW - 1);
+  start = Math.max(2, end - WINDOW + 1);
+
+  const items: (number | "gap")[] = [1];
+  if (start > 2) items.push("gap");
+  for (let p = start; p <= end; p++) items.push(p);
+  if (end < totalPages - 1) items.push("gap");
+  items.push(totalPages);
+  return items;
+}
+
 export default function Pagination({
   basePath,
   page,
@@ -43,19 +69,30 @@ export default function Pagination({
         <ChevronLeft size={16} />
       </Link>
 
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-        <Link
-          key={p}
-          href={buildHref(basePath, p, extraQuery)}
-          className={`flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium ${
-            p === page
-              ? "bg-brand text-white"
-              : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-          }`}
-        >
-          {p}
-        </Link>
-      ))}
+      {pageItems(page, totalPages).map((item, i) =>
+        item === "gap" ? (
+          <span
+            key={`gap-${i}`}
+            aria-hidden="true"
+            className="flex h-9 w-9 items-center justify-center text-sm text-slate-400"
+          >
+            &hellip;
+          </span>
+        ) : (
+          <Link
+            key={item}
+            href={buildHref(basePath, item, extraQuery)}
+            aria-current={item === page ? "page" : undefined}
+            className={`flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium ${
+              item === page
+                ? "bg-brand text-white"
+                : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            {item}
+          </Link>
+        )
+      )}
 
       <Link
         href={buildHref(basePath, Math.min(totalPages, page + 1), extraQuery)}

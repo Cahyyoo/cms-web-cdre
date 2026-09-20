@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 const ADMIN_PATH = "/admin/footer";
@@ -26,6 +27,7 @@ export async function updateFooterSettings(formData: FormData) {
         update: data,
       });
 
+      revalidateTag(CACHE_TAGS.footer);
       revalidatePath(ADMIN_PATH);
       // The footer renders in the public layout, so every public route needs it.
       revalidatePath("/", "layout");

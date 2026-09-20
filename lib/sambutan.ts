@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -13,10 +15,14 @@ const DEFAULT_SAMBUTAN = {
 };
 
 /** Fetches the Sambutan quote + description, with a hardcoded fallback. */
-export async function getSambutan(): Promise<{ quote: string; description: string }> {
-  const row = await prisma.sambutan.findUnique({ where: { id: 1 } });
-  return {
-    quote: row?.quote ?? DEFAULT_SAMBUTAN.quote,
-    description: row?.description ?? DEFAULT_SAMBUTAN.description,
-  };
-}
+export const getSambutan = unstable_cache(
+  async (): Promise<{ quote: string; description: string }> => {
+    const row = await prisma.sambutan.findUnique({ where: { id: 1 } });
+    return {
+      quote: row?.quote ?? DEFAULT_SAMBUTAN.quote,
+      description: row?.description ?? DEFAULT_SAMBUTAN.description,
+    };
+  },
+  ["sambutan"],
+  { tags: [CACHE_TAGS.sambutan] }
+);

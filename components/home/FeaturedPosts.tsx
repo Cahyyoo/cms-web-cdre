@@ -5,7 +5,16 @@ import { prisma } from "@/lib/prisma";
 
 async function getLatestPosts() {
   return prisma.post.findMany({
-    include: { category: true },
+    // PostCard needs six fields; `include` also fetched the @db.Text body.
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      thumbnailUrl: true,
+      publishedAt: true,
+      viewCount: true,
+      category: { select: { name: true } },
+    },
     orderBy: { publishedAt: "desc" },
     take: 3,
   });

@@ -13,8 +13,12 @@ export const metadata: Metadata = {
     "Katalog produk UMKM binaan PT Stargate Pasific Resource.",
 };
 
+/** Guards against an unbounded catalog: this page has no pagination. */
+const MAX_PRODUCTS = 60;
+
 async function getBinaanGroups() {
   return prisma.binaanGroup.findMany({
+    select: { id: true, name: true },
     orderBy: { name: "asc" },
   });
 }
@@ -22,8 +26,19 @@ async function getBinaanGroups() {
 async function getProducts(groupId?: number) {
   return prisma.product.findMany({
     where: groupId ? { groupId } : undefined,
-    include: { group: true },
+    // `include: { group: true }` re-fetched the same group rows that
+    // getBinaanGroups() already loads below; the name is mapped from there.
+    select: {
+      id: true,
+      name: true,
+      groupId: true,
+      flavor: true,
+      description: true,
+      imageUrl: true,
+      waNumber: true,
+    },
     orderBy: { name: "asc" },
+    take: MAX_PRODUCTS,
   });
 }
 
@@ -38,6 +53,8 @@ export default async function BinaanPage({
     getProducts(groupId),
     getHeroImageUrl("BINAAN_BANNER"),
   ]);
+
+  const groupNameById = new Map(groups.map((group) => [group.id, group.name]));
 
   return (
     <div>
@@ -98,7 +115,7 @@ export default async function BinaanPage({
               </div>
               <div className="flex flex-1 flex-col p-4">
                 <p className="text-xs font-medium uppercase tracking-wide text-brand-light">
-                  {product.group.name}
+                  {groupNameById.get(product.groupId)}
                 </p>
                 <h2 className="mt-1 text-base font-semibold text-slate-900">
                   {product.name}

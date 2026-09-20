@@ -1,33 +1,39 @@
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import MobileMenu, { type NavGroup } from "./MobileMenu";
 import SearchBar from "./SearchBar";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
-async function getNavData() {
-  const [csrCategories, ppmCategories, binaanGroups, activityCategories] = await Promise.all([
-    prisma.category.findMany({
-      where: { type: "CSR" },
-      select: { id: true, name: true },
-      orderBy: [{ order: "asc" }, { name: "asc" }],
-    }),
-    prisma.category.findMany({
-      where: { type: "PPM" },
-      select: { id: true, name: true },
-      orderBy: [{ order: "asc" }, { name: "asc" }],
-    }),
-    prisma.binaanGroup.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: "asc" },
-    }),
-    prisma.activityCategory.findMany({
-      select: { id: true, name: true },
-      orderBy: [{ order: "asc" }, { name: "asc" }],
-    }),
-  ]);
-  return { csrCategories, ppmCategories, binaanGroups, activityCategories };
-}
+const getNavData = unstable_cache(
+  async () => {
+    const [csrCategories, ppmCategories, binaanGroups, activityCategories] = await Promise.all([
+      prisma.category.findMany({
+        where: { type: "CSR" },
+        select: { id: true, name: true },
+        orderBy: [{ order: "asc" }, { name: "asc" }],
+      }),
+      prisma.category.findMany({
+        where: { type: "PPM" },
+        select: { id: true, name: true },
+        orderBy: [{ order: "asc" }, { name: "asc" }],
+      }),
+      prisma.binaanGroup.findMany({
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      }),
+      prisma.activityCategory.findMany({
+        select: { id: true, name: true },
+        orderBy: [{ order: "asc" }, { name: "asc" }],
+      }),
+    ]);
+    return { csrCategories, ppmCategories, binaanGroups, activityCategories };
+  },
+  ["nav-data"],
+  { tags: [CACHE_TAGS.nav] }
+);
 
 export default async function Navbar() {
   const { csrCategories, ppmCategories, binaanGroups, activityCategories } = await getNavData();

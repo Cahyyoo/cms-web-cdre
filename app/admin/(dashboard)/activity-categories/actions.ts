@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 const ADMIN_PATH = "/admin/activity-categories";
@@ -17,6 +18,7 @@ function readFields(formData: FormData) {
 }
 
 function revalidate() {
+  revalidateTag(CACHE_TAGS.nav);
   revalidatePath(ADMIN_PATH);
   revalidatePath("/galeri-kegiatan");
 }

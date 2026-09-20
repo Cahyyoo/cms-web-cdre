@@ -1,4 +1,6 @@
 import { HeroSlot } from "@prisma/client";
+import { unstable_cache } from "next/cache";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 /**
@@ -70,21 +72,33 @@ export const HERO_SLOTS: Record<
 
 export const HERO_SLOT_ORDER = Object.keys(HERO_SLOTS) as HeroSlot[];
 
+/**
+ * All stored hero images, keyed by slot. Cached as one row set rather than
+ * per slot: there are only seven, and every content page needs one of them.
+ */
+const getStoredHeroImages = unstable_cache(
+  async (): Promise<Partial<Record<HeroSlot, string>>> => {
+    const rows = await prisma.heroImage.findMany({
+      select: { slot: true, imageUrl: true },
+    });
+    return Object.fromEntries(rows.map((row) => [row.slot, row.imageUrl]));
+  },
+  ["hero-images"],
+  { tags: [CACHE_TAGS.hero] }
+);
+
 /** Fetches the current image URL for a single hero slot, with a hardcoded fallback. */
 export async function getHeroImageUrl(slot: HeroSlot): Promise<string> {
-  const row = await prisma.heroImage.findUnique({ where: { slot } });
-  return row?.imageUrl ?? HERO_SLOTS[slot].defaultImageUrl;
+  const stored = await getStoredHeroImages();
+  return stored[slot] ?? HERO_SLOTS[slot].defaultImageUrl;
 }
 
 /** Fetches image URLs for several hero slots at once (e.g. the homepage needs two). */
 export async function getHeroImageUrls(
   slots: HeroSlot[]
-): Promise<Record<string, string>> {
-  const rows = await prisma.heroImage.findMany({
-    where: { slot: { in: slots } },
-  });
-  const bySlot = new Map(rows.map((row) => [row.slot, row.imageUrl]));
+): Promise<Record<HeroSlot, string>> {
+  const stored = await getStoredHeroImages();
   return Object.fromEntries(
-    slots.map((slot) => [slot, bySlot.get(slot) ?? HERO_SLOTS[slot].defaultImageUrl])
-  );
+    slots.map((slot) => [slot, stored[slot] ?? HERO_SLOTS[slot].defaultImageUrl])
+  ) as Record<HeroSlot, string>;
 }

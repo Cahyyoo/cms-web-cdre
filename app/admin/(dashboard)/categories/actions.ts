@@ -1,8 +1,9 @@
 "use server";
 
 import { CategoryType } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 const ADMIN_PATH = "/admin/categories";
@@ -24,6 +25,7 @@ function readFields(formData: FormData) {
 }
 
 function revalidate() {
+  revalidateTag(CACHE_TAGS.nav);
   revalidatePath(ADMIN_PATH);
   revalidatePath("/ppm");
   revalidatePath("/csr");

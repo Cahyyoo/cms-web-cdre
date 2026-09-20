@@ -18,7 +18,17 @@ export async function getPostsByType(
   const [posts, totalCount] = await Promise.all([
     prisma.post.findMany({
       where,
-      include: { category: true },
+      // Only what PostCard renders. `include: { category: true }` pulled the
+      // full @db.Text article body for all 8 cards and threw it away.
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        thumbnailUrl: true,
+        publishedAt: true,
+        viewCount: true,
+        category: { select: { name: true } },
+      },
       orderBy: { publishedAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
