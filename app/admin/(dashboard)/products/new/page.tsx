@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
-import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { createProduct } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Tambah Produk",
@@ -16,7 +18,7 @@ async function getGroups() {
 export default async function NewProductPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const groups = await getGroups();
 
@@ -24,11 +26,7 @@ export default async function NewProductPage({
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Produk</h1>
 
-      {searchParams.error && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       {groups.length === 0 ? (
         <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700">
@@ -87,7 +85,7 @@ export default async function NewProductPage({
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" className={primaryButtonClass}>Simpan</button>
+            <SubmitButton>Simpan</SubmitButton>
             <Link href="/admin/products" className={secondaryButtonClass}>Batal</Link>
           </div>
         </form>

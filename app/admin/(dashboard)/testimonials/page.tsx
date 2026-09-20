@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteTestimonial, toggleTestimonialPublished } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
+import PublishToggle from "@/components/admin/PublishToggle";
 
 export const metadata: Metadata = {
   title: "Testimoni",
@@ -14,7 +16,11 @@ async function getTestimonials() {
   return prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } });
 }
 
-export default async function TestimonialsPage() {
+export default async function TestimonialsPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const testimonials = await getTestimonials();
   const pendingCount = testimonials.filter((t) => !t.isPublished).length;
 
@@ -39,6 +45,8 @@ export default async function TestimonialsPage() {
           <Plus size={16} /> Tambah
         </Link>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">
@@ -74,29 +82,14 @@ export default async function TestimonialsPage() {
                   {item.quote}
                 </td>
                 <td className="px-4 py-3">
-                  <form
+                  <PublishToggle
+                    isPublished={item.isPublished}
                     action={toggleTestimonialPublished.bind(
                       null,
                       item.id,
                       !item.isPublished
                     )}
-                  >
-                    <button
-                      type="submit"
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
-                        item.isPublished
-                          ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                          : "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                      }`}
-                      title={
-                        item.isPublished
-                          ? "Klik untuk menyembunyikan dari Beranda"
-                          : "Klik untuk menayangkan di Beranda"
-                      }
-                    >
-                      {item.isPublished ? "Tayang" : "Menunggu"}
-                    </button>
-                  </form>
+                  />
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">

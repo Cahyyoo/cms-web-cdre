@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createActivityCategory } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Tambah Kategori Kegiatan",
@@ -10,17 +12,13 @@ export const metadata: Metadata = {
 export default function NewActivityCategoryPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Kategori Kegiatan</h1>
 
-      {searchParams.error === "duplicate" && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          Kategori dengan nama tersebut sudah ada.
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={createActivityCategory} className="mt-6 space-y-4">
         <div>
@@ -35,7 +33,7 @@ export default function NewActivityCategoryPage({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan</button>
+          <SubmitButton>Simpan</SubmitButton>
           <Link href="/admin/activity-categories" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

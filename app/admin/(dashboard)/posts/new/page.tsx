@@ -2,9 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import RichTextEditor from "@/components/admin/RichTextEditor";
-import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { createPost } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Tambah Artikel",
@@ -17,7 +19,7 @@ async function getCategories() {
 export default async function NewPostPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const categories = await getCategories();
   const today = new Date().toISOString().slice(0, 10);
@@ -26,16 +28,7 @@ export default async function NewPostPage({
     <div className="max-w-2xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Artikel</h1>
 
-      {searchParams.error === "duplicate-slug" && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          Slug sudah dipakai artikel lain. Gunakan judul/slug yang berbeda.
-        </p>
-      )}
-      {searchParams.error && searchParams.error !== "duplicate-slug" && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       {categories.length === 0 ? (
         <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-700">
@@ -96,7 +89,7 @@ export default async function NewPostPage({
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" className={primaryButtonClass}>Simpan</button>
+            <SubmitButton>Simpan</SubmitButton>
             <Link href="/admin/posts" className={secondaryButtonClass}>Batal</Link>
           </div>
         </form>

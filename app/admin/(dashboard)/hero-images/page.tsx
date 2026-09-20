@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { HERO_SLOT_ORDER, HERO_SLOTS } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Gambar Hero & Banner",
@@ -19,7 +20,11 @@ async function getHeroImages() {
   }));
 }
 
-export default async function HeroImagesAdminPage() {
+export default async function HeroImagesAdminPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const items = await getHeroImages();
 
   return (
@@ -31,6 +36,8 @@ export default async function HeroImagesAdminPage() {
           tetap posisinya — cukup ganti gambarnya, tidak perlu tambah/hapus baris.
         </p>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

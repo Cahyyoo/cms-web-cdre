@@ -1,16 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createBinaanGroup } from "../actions";
+import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Tambah Kelompok Binaan",
 };
 
-export default function NewBinaanGroupPage() {
+export default function NewBinaanGroupPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Kelompok Binaan</h1>
+
+      <FormAlert code={searchParams.flash} />
 
       <form action={createBinaanGroup} className="mt-6 space-y-4">
         <div>
@@ -19,7 +27,7 @@ export default function NewBinaanGroupPage() {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan</button>
+          <SubmitButton>Simpan</SubmitButton>
           <Link href="/admin/binaan-groups" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

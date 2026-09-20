@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage, UploadError } from "@/lib/upload";
+import { resolveImage } from "@/lib/upload";
+
+const ADMIN_PATH = "/admin/gallery";
 
 function readFields(formData: FormData) {
   const period = String(formData.get("period") ?? "").trim();
@@ -14,39 +16,45 @@ function readFields(formData: FormData) {
   };
 }
 
-export async function createGalleryItem(formData: FormData) {
-  try {
-    const imageUrl = await resolveImage(formData, "gallery");
-    await prisma.gallery.create({ data: { ...readFields(formData), imageUrl } });
-  } catch (error) {
-    if (error instanceof UploadError) {
-      redirect(`/admin/gallery/new?error=${encodeURIComponent(error.message)}`);
-    }
-    throw error;
-  }
-  revalidatePath("/admin/gallery");
+function revalidate() {
+  revalidatePath(ADMIN_PATH);
   revalidatePath("/penghargaan");
-  redirect("/admin/gallery");
+}
+
+export async function createGalleryItem(formData: FormData) {
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created" },
+    async () => {
+      const imageUrl = await resolveImage(formData, "gallery");
+      await prisma.gallery.create({
+        data: { ...readFields(formData), imageUrl },
+      });
+      revalidate();
+    }
+  );
 }
 
 export async function updateGalleryItem(id: number, formData: FormData) {
-  try {
-    const current = await prisma.gallery.findUniqueOrThrow({ where: { id } });
-    const imageUrl = await resolveImage(formData, "gallery", current.imageUrl);
-    await prisma.gallery.update({ where: { id }, data: { ...readFields(formData), imageUrl } });
-  } catch (error) {
-    if (error instanceof UploadError) {
-      redirect(`/admin/gallery/${id}?error=${encodeURIComponent(error.message)}`);
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/${id}`, success: "updated" },
+    async () => {
+      const current = await prisma.gallery.findUniqueOrThrow({ where: { id } });
+      const imageUrl = await resolveImage(formData, "gallery", current.imageUrl);
+      await prisma.gallery.update({
+        where: { id },
+        data: { ...readFields(formData), imageUrl },
+      });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/gallery");
-  revalidatePath("/penghargaan");
-  redirect("/admin/gallery");
+  );
 }
 
 export async function deleteGalleryItem(id: number) {
-  await prisma.gallery.delete({ where: { id } });
-  revalidatePath("/admin/gallery");
-  revalidatePath("/penghargaan");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "deleted" },
+    async () => {
+      await prisma.gallery.delete({ where: { id } });
+      revalidate();
+    }
+  );
 }

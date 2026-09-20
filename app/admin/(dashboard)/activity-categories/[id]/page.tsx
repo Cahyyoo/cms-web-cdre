@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateActivityCategory } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Edit Kategori Kegiatan",
@@ -14,7 +16,7 @@ export default async function EditActivityCategoryPage({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const category = await prisma.activityCategory.findUnique({
     where: { id: Number(params.id) },
@@ -27,11 +29,7 @@ export default async function EditActivityCategoryPage({
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Edit Kategori Kegiatan</h1>
 
-      {searchParams.error === "duplicate" && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          Kategori dengan nama tersebut sudah ada.
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={updateActivityCategoryWithId} className="mt-6 space-y-4">
         <div>
@@ -46,7 +44,7 @@ export default async function EditActivityCategoryPage({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <SubmitButton>Simpan Perubahan</SubmitButton>
           <Link href="/admin/activity-categories" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

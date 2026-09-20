@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteGalleryItem } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Galeri Penghargaan",
@@ -14,7 +15,11 @@ async function getGalleryItems() {
   return prisma.gallery.findMany({ orderBy: { id: "desc" } });
 }
 
-export default async function GalleryAdminPage() {
+export default async function GalleryAdminPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const items = await getGalleryItems();
 
   return (
@@ -33,6 +38,8 @@ export default async function GalleryAdminPage() {
           <Plus size={16} /> Tambah
         </Link>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

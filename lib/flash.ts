@@ -28,11 +28,31 @@ export const FLASH = {
   },
   "duplicate-slug": {
     tone: "error",
-    text: "Slug sudah dipakai artikel lain. Gunakan slug berbeda.",
+    text: "Slug sudah dipakai artikel lain. Gunakan judul/slug yang berbeda.",
   },
   "in-use": {
     tone: "error",
     text: "Data masih dipakai oleh isi lain. Hapus isinya terlebih dahulu.",
+  },
+  "duplicate-category": {
+    tone: "error",
+    text: "Kategori dengan nama dan tipe yang sama sudah ada.",
+  },
+  "duplicate-activity-category": {
+    tone: "error",
+    text: "Kategori dengan nama tersebut sudah ada.",
+  },
+  "in-use-category": {
+    tone: "error",
+    text: "Kategori tidak bisa dihapus karena masih dipakai oleh artikel. Pindahkan atau hapus artikel terkait terlebih dahulu.",
+  },
+  "in-use-activity-category": {
+    tone: "error",
+    text: "Kategori tidak bisa dihapus karena masih dipakai oleh foto kegiatan. Pindahkan atau hapus foto terkait terlebih dahulu.",
+  },
+  "in-use-binaan-group": {
+    tone: "error",
+    text: "Kelompok tidak bisa dihapus karena masih memiliki produk. Hapus atau pindahkan produk terkait terlebih dahulu.",
   },
   "not-found": {
     tone: "error",
@@ -46,6 +66,7 @@ export const FLASH = {
   },
   "upload-required": { tone: "error", text: "Foto wajib diunggah." },
   "save-failed": { tone: "error", text: "Gagal menyimpan. Silakan coba lagi." },
+  "login-failed": { tone: "error", text: "Username atau password salah." },
 } as const satisfies Record<string, { tone: "success" | "error"; text: string }>;
 
 export type FlashCode = keyof typeof FLASH;

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
-import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createGalleryItem } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Tambah Item Galeri",
@@ -11,17 +13,13 @@ export const metadata: Metadata = {
 export default function NewGalleryItemPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   return (
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Tambah Item Galeri</h1>
 
-      {searchParams.error && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={createGalleryItem} className="mt-6 space-y-4">
         <div>
@@ -54,7 +52,7 @@ export default function NewGalleryItemPage({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan</button>
+          <SubmitButton>Simpan</SubmitButton>
           <Link href="/admin/gallery" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

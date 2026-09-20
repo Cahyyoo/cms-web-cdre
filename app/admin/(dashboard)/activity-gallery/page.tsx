@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteActivityPhoto } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Foto Galeri Kegiatan",
@@ -17,7 +18,11 @@ async function getActivityPhotos() {
   });
 }
 
-export default async function ActivityGalleryAdminPage() {
+export default async function ActivityGalleryAdminPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const items = await getActivityPhotos();
 
   return (
@@ -36,6 +41,8 @@ export default async function ActivityGalleryAdminPage() {
           <Plus size={16} /> Tambah
         </Link>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

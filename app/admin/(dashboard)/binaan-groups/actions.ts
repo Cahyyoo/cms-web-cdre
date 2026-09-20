@@ -1,38 +1,49 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 
-export async function createBinaanGroup(formData: FormData) {
-  const name = String(formData.get("name") ?? "");
-  await prisma.binaanGroup.create({ data: { name } });
-  revalidatePath("/admin/binaan-groups");
+const ADMIN_PATH = "/admin/binaan-groups";
+
+const IN_USE = { "in-use": "in-use-binaan-group" } as const;
+
+function revalidate() {
+  revalidatePath(ADMIN_PATH);
   revalidatePath("/binaan");
-  redirect("/admin/binaan-groups");
+}
+
+export async function createBinaanGroup(formData: FormData) {
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created" },
+    async () => {
+      await prisma.binaanGroup.create({
+        data: { name: String(formData.get("name") ?? "") },
+      });
+      revalidate();
+    }
+  );
 }
 
 export async function updateBinaanGroup(id: number, formData: FormData) {
-  const name = String(formData.get("name") ?? "");
-  await prisma.binaanGroup.update({ where: { id }, data: { name } });
-  revalidatePath("/admin/binaan-groups");
-  revalidatePath("/binaan");
-  redirect("/admin/binaan-groups");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/${id}`, success: "updated" },
+    async () => {
+      await prisma.binaanGroup.update({
+        where: { id },
+        data: { name: String(formData.get("name") ?? "") },
+      });
+      revalidate();
+    }
+  );
 }
 
 export async function deleteBinaanGroup(id: number) {
-  try {
-    await prisma.binaanGroup.delete({ where: { id } });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2003"
-    ) {
-      redirect("/admin/binaan-groups?error=in-use");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "deleted", errorOverrides: IN_USE },
+    async () => {
+      await prisma.binaanGroup.delete({ where: { id } });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/binaan-groups");
-  revalidatePath("/binaan");
+  );
 }

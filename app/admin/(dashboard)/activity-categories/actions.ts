@@ -1,9 +1,13 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
+
+const ADMIN_PATH = "/admin/activity-categories";
+
+const DUPLICATE = { duplicate: "duplicate-activity-category" } as const;
+const IN_USE = { "in-use": "in-use-activity-category" } as const;
 
 function readFields(formData: FormData) {
   return {
@@ -12,52 +16,40 @@ function readFields(formData: FormData) {
   };
 }
 
-export async function createActivityCategory(formData: FormData) {
-  try {
-    await prisma.activityCategory.create({ data: readFields(formData) });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      redirect("/admin/activity-categories/new?error=duplicate");
-    }
-    throw error;
-  }
-  revalidatePath("/admin/activity-categories");
+function revalidate() {
+  revalidatePath(ADMIN_PATH);
   revalidatePath("/galeri-kegiatan");
-  redirect("/admin/activity-categories");
+}
+
+export async function createActivityCategory(formData: FormData) {
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created", errorOverrides: DUPLICATE },
+    async () => {
+      await prisma.activityCategory.create({ data: readFields(formData) });
+      revalidate();
+    }
+  );
 }
 
 export async function updateActivityCategory(id: number, formData: FormData) {
-  try {
-    await prisma.activityCategory.update({ where: { id }, data: readFields(formData) });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      redirect(`/admin/activity-categories/${id}?error=duplicate`);
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/${id}`, success: "updated", errorOverrides: DUPLICATE },
+    async () => {
+      await prisma.activityCategory.update({
+        where: { id },
+        data: readFields(formData),
+      });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/activity-categories");
-  revalidatePath("/galeri-kegiatan");
-  redirect("/admin/activity-categories");
+  );
 }
 
 export async function deleteActivityCategory(id: number) {
-  try {
-    await prisma.activityCategory.delete({ where: { id } });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2003"
-    ) {
-      redirect("/admin/activity-categories?error=in-use");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "deleted", errorOverrides: IN_USE },
+    async () => {
+      await prisma.activityCategory.delete({ where: { id } });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/activity-categories");
-  revalidatePath("/galeri-kegiatan");
+  );
 }

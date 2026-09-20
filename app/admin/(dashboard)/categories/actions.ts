@@ -1,61 +1,60 @@
 "use server";
 
-import { Prisma, type CategoryType } from "@prisma/client";
+import { CategoryType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
 
+const ADMIN_PATH = "/admin/categories";
+
+// Context-specific copy: the generic "duplicate"/"in-use" wording loses the
+// detail that used to be hand-written into each page.
+const DUPLICATE = { duplicate: "duplicate-category" } as const;
+const IN_USE = { "in-use": "in-use-category" } as const;
+
 function readFields(formData: FormData) {
+  const rawType = String(formData.get("type") ?? "");
   return {
     name: String(formData.get("name") ?? ""),
-    type: String(formData.get("type") ?? "PPM") as CategoryType,
+    // Validated rather than cast: a hand-crafted POST with type=BOGUS used to
+    // pass TypeScript and reach Prisma as an opaque 500.
+    type: rawType in CategoryType ? (rawType as CategoryType) : CategoryType.PPM,
     order: Number(formData.get("order") ?? 0) || 0,
   };
 }
 
+function revalidate() {
+  revalidatePath(ADMIN_PATH);
+  revalidatePath("/ppm");
+  revalidatePath("/csr");
+}
+
 export async function createCategory(formData: FormData) {
-  try {
-    await prisma.category.create({ data: readFields(formData) });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      redirect("/admin/categories/new?error=duplicate");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created", errorOverrides: DUPLICATE },
+    async () => {
+      await prisma.category.create({ data: readFields(formData) });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/categories");
-  redirect("/admin/categories");
+  );
 }
 
 export async function updateCategory(id: number, formData: FormData) {
-  try {
-    await prisma.category.update({ where: { id }, data: readFields(formData) });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      redirect(`/admin/categories/${id}?error=duplicate`);
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/${id}`, success: "updated", errorOverrides: DUPLICATE },
+    async () => {
+      await prisma.category.update({ where: { id }, data: readFields(formData) });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/categories");
-  redirect("/admin/categories");
+  );
 }
 
 export async function deleteCategory(id: number) {
-  try {
-    await prisma.category.delete({ where: { id } });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2003"
-    ) {
-      redirect("/admin/categories?error=in-use");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "deleted", errorOverrides: IN_USE },
+    async () => {
+      await prisma.category.delete({ where: { id } });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/categories");
+  );
 }

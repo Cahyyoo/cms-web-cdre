@@ -5,6 +5,7 @@ import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatViews } from "@/lib/utils";
 import { deletePost } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Artikel PPM & CSR",
@@ -25,7 +26,11 @@ async function getPosts() {
   });
 }
 
-export default async function PostsPage() {
+export default async function PostsPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const posts = await getPosts();
 
   return (
@@ -44,6 +49,8 @@ export default async function PostsPage() {
           <Plus size={16} /> Tambah
         </Link>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

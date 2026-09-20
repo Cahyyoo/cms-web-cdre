@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass } from "@/components/admin/formStyles";
+import { inputClass, labelClass } from "@/components/admin/formStyles";
 import { getSambutan } from "@/lib/sambutan";
 import { updateSambutan } from "./actions";
+import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Sambutan",
 };
 
-export default async function SambutanAdminPage() {
+export default async function SambutanAdminPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const sambutan = await getSambutan();
 
   return (
@@ -16,6 +22,8 @@ export default async function SambutanAdminPage() {
       <p className="mt-1 text-sm text-slate-500">
         Teks kutipan dan deskripsi pada bagian &ldquo;Sambutan&rdquo; di halaman Beranda.
       </p>
+
+      <FormAlert code={searchParams.flash} />
 
       <form action={updateSambutan} className="mt-6 space-y-4">
         <div>
@@ -28,7 +36,7 @@ export default async function SambutanAdminPage() {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <SubmitButton>Simpan Perubahan</SubmitButton>
         </div>
       </form>
     </div>

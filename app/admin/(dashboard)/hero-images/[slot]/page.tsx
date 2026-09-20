@@ -4,10 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
-import { fileInputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { fileInputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { HERO_SLOTS } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 import { updateHeroImage } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Ganti Gambar Hero/Banner",
@@ -18,7 +20,7 @@ export default async function EditHeroImagePage({
   searchParams,
 }: {
   params: { slot: string };
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const slot = params.slot as HeroSlot;
   const meta = HERO_SLOTS[slot];
@@ -34,11 +36,7 @@ export default async function EditHeroImagePage({
       <h1 className="text-xl font-bold text-slate-900">{meta.label}</h1>
       <p className="mt-1 text-sm text-slate-500">{meta.page}</p>
 
-      {searchParams.error && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={updateHeroImageWithSlot} className="mt-6 space-y-4">
         <div>
@@ -69,7 +67,7 @@ export default async function EditHeroImagePage({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <SubmitButton>Simpan Perubahan</SubmitButton>
           <Link href="/admin/hero-images" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

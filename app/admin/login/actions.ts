@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { withFlash } from "@/lib/flash";
 import {
   createSessionToken,
   isSecureCookie,
@@ -34,7 +35,12 @@ export async function login(formData: FormData) {
     password === validPassword;
 
   if (!isValid) {
-    redirect(`/admin/login?error=1&next=${encodeURIComponent(next)}`);
+    redirect(
+      withFlash(
+        `/admin/login?next=${encodeURIComponent(next)}`,
+        "login-failed"
+      )
+    );
   }
 
   const token = await createSessionToken();

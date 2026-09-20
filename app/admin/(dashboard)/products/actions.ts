@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage, UploadError } from "@/lib/upload";
+import { resolveImage } from "@/lib/upload";
+
+const ADMIN_PATH = "/admin/products";
 
 function readFields(formData: FormData) {
   const flavor = String(formData.get("flavor") ?? "").trim();
@@ -16,39 +18,45 @@ function readFields(formData: FormData) {
   };
 }
 
-export async function createProduct(formData: FormData) {
-  try {
-    const imageUrl = await resolveImage(formData, "products");
-    await prisma.product.create({ data: { ...readFields(formData), imageUrl } });
-  } catch (error) {
-    if (error instanceof UploadError) {
-      redirect(`/admin/products/new?error=${encodeURIComponent(error.message)}`);
-    }
-    throw error;
-  }
-  revalidatePath("/admin/products");
+function revalidate() {
+  revalidatePath(ADMIN_PATH);
   revalidatePath("/binaan");
-  redirect("/admin/products");
+}
+
+export async function createProduct(formData: FormData) {
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/new`, success: "created" },
+    async () => {
+      const imageUrl = await resolveImage(formData, "products");
+      await prisma.product.create({
+        data: { ...readFields(formData), imageUrl },
+      });
+      revalidate();
+    }
+  );
 }
 
 export async function updateProduct(id: number, formData: FormData) {
-  try {
-    const current = await prisma.product.findUniqueOrThrow({ where: { id } });
-    const imageUrl = await resolveImage(formData, "products", current.imageUrl);
-    await prisma.product.update({ where: { id }, data: { ...readFields(formData), imageUrl } });
-  } catch (error) {
-    if (error instanceof UploadError) {
-      redirect(`/admin/products/${id}?error=${encodeURIComponent(error.message)}`);
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: `${ADMIN_PATH}/${id}`, success: "updated" },
+    async () => {
+      const current = await prisma.product.findUniqueOrThrow({ where: { id } });
+      const imageUrl = await resolveImage(formData, "products", current.imageUrl);
+      await prisma.product.update({
+        where: { id },
+        data: { ...readFields(formData), imageUrl },
+      });
+      revalidate();
     }
-    throw error;
-  }
-  revalidatePath("/admin/products");
-  revalidatePath("/binaan");
-  redirect("/admin/products");
+  );
 }
 
 export async function deleteProduct(id: number) {
-  await prisma.product.delete({ where: { id } });
-  revalidatePath("/admin/products");
-  revalidatePath("/binaan");
+  return runAction(
+    { onSuccess: ADMIN_PATH, onError: ADMIN_PATH, success: "deleted" },
+    async () => {
+      await prisma.product.delete({ where: { id } });
+      revalidate();
+    }
+  );
 }

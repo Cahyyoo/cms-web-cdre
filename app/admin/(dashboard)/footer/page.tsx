@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass } from "@/components/admin/formStyles";
+import { inputClass, labelClass } from "@/components/admin/formStyles";
 import { getFooterSettings } from "@/lib/footer-settings";
 import { updateFooterSettings } from "./actions";
+import SubmitButton from "@/components/admin/SubmitButton";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Footer",
 };
 
-export default async function FooterAdminPage() {
+export default async function FooterAdminPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const footer = await getFooterSettings();
 
   return (
@@ -16,6 +22,8 @@ export default async function FooterAdminPage() {
       <p className="mt-1 text-sm text-slate-500">
         Deskripsi, kontak, dan link sosial media yang tampil di footer setiap halaman publik.
       </p>
+
+      <FormAlert code={searchParams.flash} />
 
       <form action={updateFooterSettings} className="mt-6 space-y-4">
         <div>
@@ -54,7 +62,7 @@ export default async function FooterAdminPage() {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <SubmitButton>Simpan Perubahan</SubmitButton>
         </div>
       </form>
     </div>

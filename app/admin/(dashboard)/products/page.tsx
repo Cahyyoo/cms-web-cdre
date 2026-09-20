@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteProduct } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Produk Binaan",
@@ -17,7 +18,11 @@ async function getProducts() {
   });
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: { flash?: string };
+}) {
   const products = await getProducts();
 
   return (
@@ -36,6 +41,8 @@ export default async function ProductsPage() {
           <Plus size={16} /> Tambah
         </Link>
       </div>
+
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

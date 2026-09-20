@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 import { login } from "./actions";
 
 export const metadata: Metadata = {
@@ -8,7 +10,7 @@ export const metadata: Metadata = {
 export default function AdminLoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string; next?: string };
+  searchParams: { flash?: string; next?: string };
 }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
@@ -18,11 +20,7 @@ export default function AdminLoginPage({
           PT Stargate Pasific Resource
         </p>
 
-        {searchParams.error && (
-          <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-            Username atau password salah.
-          </p>
-        )}
+        <FormAlert code={searchParams.flash} />
 
         <form action={login} className="mt-6 space-y-4">
           <input
@@ -61,12 +59,12 @@ export default function AdminLoginPage({
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand"
             />
           </div>
-          <button
-            type="submit"
+          <SubmitButton
+            pendingLabel="Memproses..."
             className="w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
           >
             Masuk
-          </button>
+          </SubmitButton>
         </form>
       </div>
     </div>

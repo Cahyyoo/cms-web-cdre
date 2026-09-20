@@ -2,9 +2,11 @@
 
 import { HeroSlot } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage, UploadError } from "@/lib/upload";
+import { resolveImage } from "@/lib/upload";
+
+const ADMIN_PATH = "/admin/hero-images";
 
 // Public path revalidated for each slot after its image changes.
 const REVALIDATE_PATH: Record<HeroSlot, string> = {
@@ -18,21 +20,24 @@ const REVALIDATE_PATH: Record<HeroSlot, string> = {
 };
 
 export async function updateHeroImage(slot: HeroSlot, formData: FormData) {
-  try {
-    const current = await prisma.heroImage.findUnique({ where: { slot } });
-    const imageUrl = await resolveImage(formData, "hero", current?.imageUrl);
-    await prisma.heroImage.upsert({
-      where: { slot },
-      create: { slot, imageUrl },
-      update: { imageUrl },
-    });
-  } catch (error) {
-    if (error instanceof UploadError) {
-      redirect(`/admin/hero-images/${slot}?error=${encodeURIComponent(error.message)}`);
+  return runAction(
+    {
+      onSuccess: ADMIN_PATH,
+      onError: `${ADMIN_PATH}/${slot}`,
+      success: "updated",
+    },
+    async () => {
+      const current = await prisma.heroImage.findUnique({ where: { slot } });
+      const imageUrl = await resolveImage(formData, "hero", current?.imageUrl);
+
+      await prisma.heroImage.upsert({
+        where: { slot },
+        create: { slot, imageUrl },
+        update: { imageUrl },
+      });
+
+      revalidatePath(ADMIN_PATH);
+      revalidatePath(REVALIDATE_PATH[slot]);
     }
-    throw error;
-  }
-  revalidatePath("/admin/hero-images");
-  revalidatePath(REVALIDATE_PATH[slot]);
-  redirect("/admin/hero-images");
+  );
 }

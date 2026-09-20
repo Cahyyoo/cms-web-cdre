@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
-import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateGalleryItem } from "../actions";
+import FormAlert from "@/components/admin/FormAlert";
+import SubmitButton from "@/components/admin/SubmitButton";
 
 export const metadata: Metadata = {
   title: "Edit Item Galeri",
@@ -16,7 +18,7 @@ export default async function EditGalleryItemPage({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const item = await prisma.gallery.findUnique({
     where: { id: Number(params.id) },
@@ -29,11 +31,7 @@ export default async function EditGalleryItemPage({
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900">Edit Item Galeri</h1>
 
-      {searchParams.error && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {searchParams.error}
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <form action={updateGalleryItemWithId} className="mt-6 space-y-4">
         <div>
@@ -74,7 +72,7 @@ export default async function EditGalleryItemPage({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <SubmitButton>Simpan Perubahan</SubmitButton>
           <Link href="/admin/gallery" className={secondaryButtonClass}>Batal</Link>
         </div>
       </form>

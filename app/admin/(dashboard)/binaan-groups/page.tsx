@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteBinaanGroup } from "./actions";
+import FormAlert from "@/components/admin/FormAlert";
 
 export const metadata: Metadata = {
   title: "Kelompok Binaan",
@@ -19,7 +20,7 @@ async function getGroups() {
 export default async function BinaanGroupsPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { flash?: string };
 }) {
   const groups = await getGroups();
 
@@ -40,11 +41,7 @@ export default async function BinaanGroupsPage({
         </Link>
       </div>
 
-      {searchParams.error === "in-use" && (
-        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          Kelompok tidak bisa dihapus karena masih memiliki produk. Hapus atau pindahkan produk terkait terlebih dahulu.
-        </p>
-      )}
+      <FormAlert code={searchParams.flash} />
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">
