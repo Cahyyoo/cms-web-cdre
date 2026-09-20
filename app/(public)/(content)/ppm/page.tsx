@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PostCard from "@/components/blog/PostCard";
 import Pagination from "@/components/blog/Pagination";
 import PageBanner from "@/components/ui/PageBanner";
+import { getHeroImageUrl } from "@/lib/hero-images";
 import { getPostsByType } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -19,13 +20,16 @@ export default async function PpmPage({
     ? Number(searchParams.category)
     : undefined;
 
-  const { posts, totalPages } = await getPostsByType("PPM", page, categoryId);
+  const [{ posts, totalPages }, bannerUrl] = await Promise.all([
+    getPostsByType("PPM", page, categoryId),
+    getHeroImageUrl("PPM_BANNER"),
+  ]);
 
   return (
     <div>
       <div className="mb-6">
         <PageBanner
-          src="/banners/bantuan-dana-pendidikan.jpg"
+          src={bannerUrl}
           alt="Penyerahan bantuan dana pendidikan kepada mahasiswa binaan"
           title="PPM — Pengembangan & Pemberdayaan Masyarakat"
           subtitle="Berita dan publikasi program pengembangan masyarakat."

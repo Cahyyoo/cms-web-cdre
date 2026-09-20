@@ -2,35 +2,26 @@ import { ArrowLeft, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { formatDate, formatViews } from "@/lib/utils";
 
-async function getPost(slug: string) {
-  const post = await prisma.post.findUnique({
+// `generateMetadata` and the page both need the article; React's `cache`
+// collapses them into a single query per request.
+const getPost = cache(async (slug: string) =>
+  prisma.post.findUnique({
     where: { slug },
     include: { category: true },
-  });
-  if (!post) return null;
-
-  // Atomic increment — safe under concurrent requests.
-  await prisma.post.update({
-    where: { id: post.id },
-    data: { viewCount: { increment: 1 } },
-  });
-
-  return post;
-}
+  })
+);
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const post = await prisma.post.findUnique({
-    where: { slug: params.slug },
-    select: { title: true },
-  });
+  const post = await getPost(params.slug);
   return { title: post?.title ?? "Artikel" };
 }
 
@@ -41,6 +32,13 @@ export default async function ArticleDetailPage({
 }) {
   const post = await getPost(params.slug);
   if (!post) notFound();
+
+  // Atomic increment — safe under concurrent requests. Runs after the read so
+  // the count shown is the one this visitor arrived with.
+  await prisma.post.update({
+    where: { id: post.id },
+    data: { viewCount: { increment: 1 } },
+  });
 
   const backHref = post.category.type === "PPM" ? "/ppm" : "/csr";
 

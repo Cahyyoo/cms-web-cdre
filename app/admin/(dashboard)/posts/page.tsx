@@ -12,7 +12,15 @@ export const metadata: Metadata = {
 
 async function getPosts() {
   return prisma.post.findMany({
-    include: { category: true },
+    // The table only shows these columns; `include: { category: true }` would
+    // also drag every post's full HTML `content` across the wire.
+    select: {
+      id: true,
+      title: true,
+      publishedAt: true,
+      viewCount: true,
+      category: { select: { name: true, type: true } },
+    },
     orderBy: { publishedAt: "desc" },
   });
 }

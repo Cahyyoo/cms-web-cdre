@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 type PaginationProps = {
   basePath: string;
@@ -32,7 +33,7 @@ export default function Pagination({
 
   return (
     <nav className="mt-8 flex items-center justify-center gap-2">
-      <a
+      <Link
         href={buildHref(basePath, Math.max(1, page - 1), extraQuery)}
         aria-disabled={page <= 1}
         className={`flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 ${
@@ -40,10 +41,10 @@ export default function Pagination({
         }`}
       >
         <ChevronLeft size={16} />
-      </a>
+      </Link>
 
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-        <a
+        <Link
           key={p}
           href={buildHref(basePath, p, extraQuery)}
           className={`flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium ${
@@ -53,10 +54,10 @@ export default function Pagination({
           }`}
         >
           {p}
-        </a>
+        </Link>
       ))}
 
-      <a
+      <Link
         href={buildHref(basePath, Math.min(totalPages, page + 1), extraQuery)}
         aria-disabled={page >= totalPages}
         className={`flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 ${
@@ -64,7 +65,7 @@ export default function Pagination({
         }`}
       >
         <ChevronRight size={16} />
-      </a>
+      </Link>
     </nav>
   );
 }

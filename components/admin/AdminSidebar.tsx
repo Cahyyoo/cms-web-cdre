@@ -1,11 +1,14 @@
 import {
   FileText,
+  Image as ImageIcon,
   Images,
   LayoutDashboard,
   Layers,
   LogOut,
   MessageSquareQuote,
   Package,
+  PanelBottom,
+  Quote,
   Tags,
   Users,
 } from "lucide-react";
@@ -21,6 +24,14 @@ const NAV_GROUPS = [
     label: "Beranda",
     items: [
       { href: "/admin/testimonials", label: "Testimoni", icon: MessageSquareQuote },
+      { href: "/admin/sambutan", label: "Sambutan", icon: Quote },
+    ],
+  },
+  {
+    label: "Tampilan",
+    items: [
+      { href: "/admin/hero-images", label: "Gambar Hero & Banner", icon: ImageIcon },
+      { href: "/admin/footer", label: "Footer", icon: PanelBottom },
     ],
   },
   {

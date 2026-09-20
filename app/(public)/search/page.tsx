@@ -11,6 +11,9 @@ async function searchPosts(query: string) {
   if (!query) return [];
   return prisma.post.findMany({
     where: { title: { contains: query } },
+    // Only what the result list renders — without this Prisma also pulls
+    // each post's full HTML `content`.
+    select: { id: true, slug: true, title: true, publishedAt: true },
     orderBy: { publishedAt: "desc" },
     take: 20,
   });

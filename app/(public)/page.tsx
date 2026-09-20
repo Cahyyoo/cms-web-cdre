@@ -5,24 +5,33 @@ import BinaanTeaser from "@/components/home/BinaanTeaser";
 import FeaturedPosts from "@/components/home/FeaturedPosts";
 import StatsBar from "@/components/home/StatsBar";
 import TestimonialSlider from "@/components/home/TestimonialSlider";
+import { getHeroImageUrls } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
+import { getSambutan } from "@/lib/sambutan";
 
 async function getTestimonials() {
   return prisma.testimonial.findMany({
     where: { isPublished: true },
+    // Matches TestimonialSlider's props — these rows are serialized into the
+    // client payload, so unused columns are pure page weight.
+    select: { id: true, name: true, title: true, quote: true, imageUrl: true },
     orderBy: { createdAt: "desc" },
   });
 }
 
 export default async function HomePage() {
-  const testimonials = await getTestimonials();
+  const [testimonials, heroImages, sambutan] = await Promise.all([
+    getTestimonials(),
+    getHeroImageUrls(["HOME_HERO", "HOME_SAMBUTAN"]),
+    getSambutan(),
+  ]);
 
   return (
     <div>
       {/* Hero */}
       <section className="relative flex h-[600px] w-full items-center overflow-hidden bg-brand-dark text-white sm:h-[680px]">
         <Image
-          src="/banners/hero-sehat-bareng.jpg"
+          src={heroImages.HOME_HERO}
           alt="Kegiatan Sehat Bareng STARGATE bersama masyarakat"
           fill
           priority
@@ -64,7 +73,7 @@ export default async function HomePage() {
       <section className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 px-4 py-24 sm:px-6 md:grid-cols-2 lg:px-8">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
           <Image
-            src="/banners/bantuan-hewan-qurban.jpg"
+            src={heroImages.HOME_SAMBUTAN}
             alt="Penyaluran bantuan hewan qurban kepada masyarakat sekitar"
             fill
             sizes="(min-width: 768px) 50vw, 100vw"
@@ -76,14 +85,10 @@ export default async function HomePage() {
             Sambutan
           </p>
           <p className="mt-4 font-serif text-2xl font-medium leading-snug text-slate-800 sm:text-3xl">
-            &ldquo;Kami berkomitmen menjalankan operasional yang
-            berkelanjutan dengan memberikan dampak positif bagi masyarakat
-            sekitar.&rdquo;
+            &ldquo;{sambutan.quote}&rdquo;
           </p>
           <p className="mt-5 text-sm leading-relaxed text-slate-500">
-            Melalui program CSR dan PPM, serta pemberdayaan UMKM binaan di
-            wilayah operasional kami, kami percaya pertumbuhan perusahaan
-            harus berjalan beriringan dengan kesejahteraan masyarakat sekitar.
+            {sambutan.description}
           </p>
           <Link
             href="/csr"

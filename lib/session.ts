@@ -6,6 +6,19 @@
 export const SESSION_COOKIE = "admin_session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8; // 8 hours
 
+/**
+ * Whether the session cookie should get the `Secure` attribute.
+ * Controlled explicitly via COOKIE_SECURE=true|false; falls back to the
+ * previous NODE_ENV-based behavior when unset, so existing HTTPS/production
+ * deployments are unaffected.
+ */
+export function isSecureCookie(): boolean {
+  const override = process.env.COOKIE_SECURE;
+  if (override === "true") return true;
+  if (override === "false") return false;
+  return process.env.NODE_ENV === "production";
+}
+
 const encoder = new TextEncoder();
 
 function bytesToHex(bytes: ArrayBuffer): string {

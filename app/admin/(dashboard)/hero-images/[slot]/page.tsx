@@ -1,0 +1,78 @@
+import { HeroSlot } from "@prisma/client";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import { fileInputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import { HERO_SLOTS } from "@/lib/hero-images";
+import { prisma } from "@/lib/prisma";
+import { updateHeroImage } from "../actions";
+
+export const metadata: Metadata = {
+  title: "Ganti Gambar Hero/Banner",
+};
+
+export default async function EditHeroImagePage({
+  params,
+  searchParams,
+}: {
+  params: { slot: string };
+  searchParams: { error?: string };
+}) {
+  const slot = params.slot as HeroSlot;
+  const meta = HERO_SLOTS[slot];
+  if (!meta) notFound();
+
+  const current = await prisma.heroImage.findUnique({ where: { slot } });
+  const currentImageUrl = current?.imageUrl ?? meta.defaultImageUrl;
+
+  const updateHeroImageWithSlot = updateHeroImage.bind(null, slot);
+
+  return (
+    <div className="max-w-xl">
+      <h1 className="text-xl font-bold text-slate-900">{meta.label}</h1>
+      <p className="mt-1 text-sm text-slate-500">{meta.page}</p>
+
+      {searchParams.error && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
+
+      <form action={updateHeroImageWithSlot} className="mt-6 space-y-4">
+        <div>
+          <span className={labelClass}>Gambar Saat Ini</span>
+          <div className="relative h-28 w-full max-w-sm overflow-hidden rounded-md bg-slate-100">
+            <Image src={currentImageUrl} alt={meta.label} fill sizes="384px" className="object-cover" />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="photo" className={labelClass}>
+            Ganti Gambar <span className="font-normal text-slate-400">(kosongkan jika tidak diganti)</span>
+          </label>
+          <input
+            id="photo"
+            name="photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className={fileInputClass}
+          />
+          <PhotoRequirements
+            items={[
+              "Format: JPG, PNG, WEBP, atau GIF",
+              "Ukuran file maksimal 5MB",
+              `Rekomendasi dimensi: ${meta.recommendedSize}`,
+              meta.hint,
+            ]}
+          />
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button type="submit" className={primaryButtonClass}>Simpan Perubahan</button>
+          <Link href="/admin/hero-images" className={secondaryButtonClass}>Batal</Link>
+        </div>
+      </form>
+    </div>
+  );
+}

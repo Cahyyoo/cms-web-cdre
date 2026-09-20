@@ -1,9 +1,13 @@
+// Built once — constructing an Intl formatter is comparatively expensive and
+// these run per row on list pages.
+const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(date));
+  return dateFormatter.format(new Date(date));
 }
 
 export function formatViews(views: number): string {
@@ -28,7 +32,15 @@ export function slugify(input: string): string {
     .replace(/-+/g, "-");
 }
 
-/** Formats a Date for the value of an <input type="date">. */
+/**
+ * Formats a Date for the value of an <input type="date">.
+ * Uses local date parts, not `toISOString()` — the latter converts to UTC
+ * first, which shifts the date back a day for any timestamp before 07:00 WIB
+ * and would show the wrong day in the edit form.
+ */
 export function toDateInputValue(date: Date | string): string {
-  return new Date(date).toISOString().slice(0, 10);
+  const d = new Date(date);
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PostCard from "@/components/blog/PostCard";
 import Pagination from "@/components/blog/Pagination";
 import PageBanner from "@/components/ui/PageBanner";
+import { getHeroImageUrl } from "@/lib/hero-images";
 import { getPostsByType } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -19,13 +20,16 @@ export default async function CsrPage({
     ? Number(searchParams.category)
     : undefined;
 
-  const { posts, totalPages } = await getPostsByType("CSR", page, categoryId);
+  const [{ posts, totalPages }, bannerUrl] = await Promise.all([
+    getPostsByType("CSR", page, categoryId),
+    getHeroImageUrl("CSR_BANNER"),
+  ]);
 
   return (
     <div>
       <div className="mb-6">
         <PageBanner
-          src="/banners/perbaikan-jalan-polora.jpg"
+          src={bannerUrl}
           alt="Bantuan perbaikan jalan untuk masyarakat sekitar"
           title="CSR — Corporate Social Responsibility"
           subtitle="Berita dan publikasi program tanggung jawab sosial perusahaan."

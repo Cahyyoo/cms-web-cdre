@@ -1,6 +1,7 @@
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getFooterSettings } from "@/lib/footer-settings";
 
 const NAV_COLUMNS = [
   {
@@ -21,7 +22,9 @@ const NAV_COLUMNS = [
   },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const footer = await getFooterSettings();
+
   return (
     <footer className="mt-16 bg-slate-950 text-slate-300">
       <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-light/60 to-transparent" />
@@ -36,27 +39,25 @@ export default function Footer() {
               className="h-12 w-auto object-contain brightness-0 invert"
             />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
-              Perusahaan sumber daya yang berkomitmen menjalankan operasional
-              berkelanjutan sekaligus memberi dampak nyata bagi masyarakat
-              sekitar melalui program CSR, PPM, dan pemberdayaan UMKM binaan.
+              {footer.description}
             </p>
             <div className="mt-5 flex gap-3">
               <a
-                href="#"
+                href={footer.facebookUrl}
                 aria-label="Facebook"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-slate-400 transition-colors hover:bg-brand hover:text-white"
               >
                 <Facebook size={16} />
               </a>
               <a
-                href="#"
+                href={footer.instagramUrl}
                 aria-label="Instagram"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-slate-400 transition-colors hover:bg-brand hover:text-white"
               >
                 <Instagram size={16} />
               </a>
               <a
-                href="#"
+                href={footer.youtubeUrl}
                 aria-label="YouTube"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-slate-400 transition-colors hover:bg-brand hover:text-white"
               >
@@ -92,15 +93,15 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-slate-400">
               <li className="flex items-start gap-2">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-brand-light" />
-                <span>Kawasan Operasional PT Stargate Pasific Resource, Indonesia</span>
+                <span>{footer.address}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="shrink-0 text-brand-light" />
-                <span>(021) 000-0000</span>
+                <span>{footer.phone}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} className="shrink-0 text-brand-light" />
-                <span>info@stargatepasificresource.co.id</span>
+                <span>{footer.email}</span>
               </li>
             </ul>
           </div>

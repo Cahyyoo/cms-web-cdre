@@ -31,6 +31,16 @@ export default function ActivityCarousel({ photos }: { photos: Photo[] }) {
   const current = photos[index];
   const goTo = (next: number) => setIndex((next + photos.length) % photos.length);
 
+  // Every slide sits inside the viewport (hidden only by opacity), so mounting
+  // them all makes the browser download the whole category up front. Keeping
+  // just the neighbours mounted preserves the crossfade at a fraction of the
+  // image payload.
+  const isNearCurrent = (i: number) => {
+    if (photos.length <= 3) return true;
+    const rawDistance = Math.abs(i - index);
+    return Math.min(rawDistance, photos.length - rawDistance) <= 1;
+  };
+
   return (
     <div
       className="group relative overflow-hidden rounded-2xl bg-slate-100"
@@ -38,23 +48,25 @@ export default function ActivityCarousel({ photos }: { photos: Photo[] }) {
       onMouseLeave={() => setPaused(false)}
     >
       <div className="relative aspect-[16/9] w-full">
-        {photos.map((photo, i) => (
-          <div
-            key={photo.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              i === index ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-          >
-            <Image
-              src={photo.imageUrl}
-              alt={photo.caption ?? "Dokumentasi kegiatan"}
-              fill
-              sizes="(min-width: 1024px) 800px, 100vw"
-              className="object-cover"
-              priority={i === 0}
-            />
-          </div>
-        ))}
+        {photos.map((photo, i) =>
+          isNearCurrent(i) ? (
+            <div
+              key={photo.id}
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                i === index ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <Image
+                src={photo.imageUrl}
+                alt={photo.caption ?? "Dokumentasi kegiatan"}
+                fill
+                sizes="(min-width: 1024px) 800px, 100vw"
+                className="object-cover"
+                priority={i === 0}
+              />
+            </div>
+          ) : null
+        )}
         {current.caption && (
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-4">
             <p className="text-sm font-medium text-white">{current.caption}</p>

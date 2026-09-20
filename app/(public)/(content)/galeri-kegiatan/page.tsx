@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ActivityCarousel from "@/components/gallery/ActivityCarousel";
 import PageBanner from "@/components/ui/PageBanner";
+import { getHeroImageUrl } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
@@ -26,13 +27,16 @@ export default async function GaleriKegiatanPage({
   searchParams: { category?: string };
 }) {
   const categoryId = searchParams.category ? Number(searchParams.category) : undefined;
-  const categories = await getActivityCategories(categoryId);
+  const [categories, bannerUrl] = await Promise.all([
+    getActivityCategories(categoryId),
+    getHeroImageUrl("GALERI_KEGIATAN_BANNER"),
+  ]);
 
   return (
     <div>
       <div className="mb-10">
         <PageBanner
-          src="/banners/kegiatan-kesehatan.jpg"
+          src={bannerUrl}
           alt="Dokumentasi kegiatan pemberdayaan masyarakat PT Stargate Pasific Resource"
           title="Galeri Kegiatan"
           subtitle="Dokumentasi kegiatan perusahaan berdasarkan kategori."

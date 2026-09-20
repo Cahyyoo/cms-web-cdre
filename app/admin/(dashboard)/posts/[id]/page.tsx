@@ -1,7 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
+import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import RichTextEditor from "@/components/admin/RichTextEditor";
+import { fileInputClass, inputClass, labelClass, primaryButtonClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { toDateInputValue } from "@/lib/utils";
 import { updatePost } from "../actions";
@@ -34,6 +37,11 @@ export default async function EditPostPage({
           Slug sudah dipakai artikel lain. Gunakan slug yang berbeda.
         </p>
       )}
+      {searchParams.error && searchParams.error !== "duplicate-slug" && (
+        <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+          {searchParams.error}
+        </p>
+      )}
 
       <form action={updatePostWithId} className="mt-6 space-y-4">
         <div>
@@ -55,8 +63,29 @@ export default async function EditPostPage({
           </select>
         </div>
         <div>
-          <label htmlFor="thumbnailUrl" className={labelClass}>URL Thumbnail</label>
-          <input id="thumbnailUrl" name="thumbnailUrl" type="url" required defaultValue={post.thumbnailUrl} className={inputClass} />
+          <span className={labelClass}>Thumbnail Saat Ini</span>
+          <div className="relative h-24 w-36 overflow-hidden rounded-md bg-slate-100">
+            <Image src={post.thumbnailUrl} alt={post.title} fill sizes="144px" className="object-cover" />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="photo" className={labelClass}>
+            Ganti Gambar <span className="font-normal text-slate-400">(kosongkan jika tidak diganti)</span>
+          </label>
+          <input
+            id="photo"
+            name="photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className={fileInputClass}
+          />
+          <PhotoRequirements
+            items={[
+              "Format: JPG, PNG, WEBP, atau GIF",
+              "Ukuran file maksimal 5MB",
+              "Rekomendasi: gambar lanskap minimal 1200×800px — dipakai sebagai thumbnail kartu dan gambar utama di halaman artikel",
+            ]}
+          />
         </div>
         <div>
           <label htmlFor="publishedAt" className={labelClass}>Tanggal Publikasi</label>
@@ -70,10 +99,8 @@ export default async function EditPostPage({
           />
         </div>
         <div>
-          <label htmlFor="content" className={labelClass}>
-            Konten <span className="font-normal text-slate-400">(HTML)</span>
-          </label>
-          <textarea id="content" name="content" required rows={10} defaultValue={post.content} className={`${inputClass} font-mono text-xs`} />
+          <label className={labelClass}>Konten</label>
+          <RichTextEditor name="content" defaultValue={post.content} />
         </div>
         <p className="text-xs text-slate-400">
           Total dilihat: {post.viewCount.toLocaleString("id-ID")} kali (bertambah otomatis, tidak bisa diedit manual).

@@ -1,7 +1,9 @@
 import { MessageCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import PageBanner from "@/components/ui/PageBanner";
+import { getHeroImageUrl } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 import { buildWhatsAppLink } from "@/lib/utils";
 
@@ -31,16 +33,17 @@ export default async function BinaanPage({
   searchParams: { group?: string };
 }) {
   const groupId = searchParams.group ? Number(searchParams.group) : undefined;
-  const [groups, products] = await Promise.all([
+  const [groups, products, bannerUrl] = await Promise.all([
     getBinaanGroups(),
     getProducts(groupId),
+    getHeroImageUrl("BINAAN_BANNER"),
   ]);
 
   return (
     <div>
       <div className="mb-6">
         <PageBanner
-          src="/banners/parcel-lebaran.jpg"
+          src={bannerUrl}
           alt="Penyaluran bantuan parcel Lebaran kepada masyarakat sekitar"
           title="Binaan UMKM"
           subtitle="Produk-produk dari kelompok UMKM binaan PT Stargate Pasific Resource."
@@ -49,7 +52,7 @@ export default async function BinaanPage({
 
       {/* Group filter */}
       <div className="mb-6 flex flex-wrap gap-2">
-        <a
+        <Link
           href="/binaan"
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
             !groupId
@@ -58,9 +61,9 @@ export default async function BinaanPage({
           }`}
         >
           Semua Kelompok
-        </a>
+        </Link>
         {groups.map((group) => (
-          <a
+          <Link
             key={group.id}
             href={`/binaan?group=${group.id}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
@@ -70,7 +73,7 @@ export default async function BinaanPage({
             }`}
           >
             {group.name}
-          </a>
+          </Link>
         ))}
       </div>
 

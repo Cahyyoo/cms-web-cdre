@@ -16,6 +16,8 @@
 .DS_Store
 *.pem
 npm-debug.log*
+*.zip
+diff_err.log
 
 # user-uploaded content (runtime data, not source)
 /public/uploads/
