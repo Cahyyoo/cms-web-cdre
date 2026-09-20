@@ -17,20 +17,25 @@ export default async function GalleryGrid({ type }: { type: GalleryType }) {
   }
 
   return (
-    <div className="columns-1 gap-4 sm:columns-2 xl:columns-3 [&>*]:mb-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {items.map((item) => (
         <figure
           key={item.id}
-          className="break-inside-avoid overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+          className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
         >
-          <div className="relative w-full">
+          {/*
+            Gallery rows don't store image dimensions, so a hardcoded 600x400
+            with h-auto reserved a 3:2 box for images of every shape and the
+            grid jumped as each one loaded. An explicit aspect box with `fill`
+            is what every other Image in this codebase does.
+          */}
+          <div className="relative aspect-[3/2] w-full bg-slate-100">
             <Image
               src={item.imageUrl}
               alt={item.title}
-              width={600}
-              height={400}
+              fill
               sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className="h-auto w-full object-cover"
+              className="object-cover"
             />
           </div>
           <figcaption className="p-3">

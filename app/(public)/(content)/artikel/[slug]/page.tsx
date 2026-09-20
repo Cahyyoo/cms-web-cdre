@@ -35,10 +35,15 @@ export default async function ArticleDetailPage({
 
   // Atomic increment — safe under concurrent requests. Runs after the read so
   // the count shown is the one this visitor arrived with.
-  await prisma.post.update({
-    where: { id: post.id },
-    data: { viewCount: { increment: 1 } },
-  });
+  //
+  // Deliberately not awaited: this is a write on a GET, and awaiting it put
+  // a full round-trip in front of every article's TTFB.
+  void prisma.post
+    .update({
+      where: { id: post.id },
+      data: { viewCount: { increment: 1 } },
+    })
+    .catch((error) => console.error("[artikel] gagal menambah viewCount", error));
 
   const backHref = post.category.type === "PPM" ? "/ppm" : "/csr";
 

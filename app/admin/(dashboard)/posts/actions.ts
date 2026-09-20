@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage } from "@/lib/upload";
+import { deleteUploadedImage, resolveImage } from "@/lib/upload";
 import { slugify } from "@/lib/utils";
 
 const ADMIN_PATH = "/admin/posts";
@@ -72,6 +72,9 @@ export async function updatePost(id: number, formData: FormData) {
         where: { id },
         data: { ...fields, slug, thumbnailUrl },
       });
+      if (thumbnailUrl !== current.thumbnailUrl) {
+        await deleteUploadedImage(current.thumbnailUrl);
+      }
       revalidate(slug);
     }
   );

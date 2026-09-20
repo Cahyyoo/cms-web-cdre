@@ -47,12 +47,13 @@ export default async function GaleriKegiatanPage({
         <p className="text-sm text-slate-400">Belum ada kategori kegiatan untuk ditampilkan.</p>
       ) : (
         <div className="space-y-14">
-          {categories.map((category) => (
+          {categories.map((category, i) => (
             <section key={category.id} id={`kategori-${category.id}`}>
               <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900 sm:text-2xl">
                 {category.name}
               </h2>
               <ActivityCarousel
+                priority={i === 0}
                 photos={category.photos.map((p) => ({
                   id: p.id,
                   imageUrl: p.imageUrl,

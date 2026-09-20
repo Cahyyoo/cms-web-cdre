@@ -4,7 +4,7 @@ import { HeroSlot } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage } from "@/lib/upload";
+import { deleteUploadedImage, resolveImage } from "@/lib/upload";
 
 const ADMIN_PATH = "/admin/hero-images";
 
@@ -35,6 +35,10 @@ export async function updateHeroImage(slot: HeroSlot, formData: FormData) {
         create: { slot, imageUrl },
         update: { imageUrl },
       });
+
+      if (imageUrl !== current?.imageUrl) {
+        await deleteUploadedImage(current?.imageUrl);
+      }
 
       revalidatePath(ADMIN_PATH);
       revalidatePath(REVALIDATE_PATH[slot]);

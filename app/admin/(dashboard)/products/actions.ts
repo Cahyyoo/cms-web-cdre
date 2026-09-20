@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
 import { prisma } from "@/lib/prisma";
-import { resolveImage } from "@/lib/upload";
+import { deleteUploadedImage, resolveImage } from "@/lib/upload";
 
 const ADMIN_PATH = "/admin/products";
 
@@ -46,6 +46,11 @@ export async function updateProduct(id: number, formData: FormData) {
         where: { id },
         data: { ...readFields(formData), imageUrl },
       });
+      // Only when the photo actually changed: resolveImage returns the
+      // existing URL untouched when no new file was chosen.
+      if (imageUrl !== current.imageUrl) {
+        await deleteUploadedImage(current.imageUrl);
+      }
       revalidate();
     }
   );

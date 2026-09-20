@@ -72,7 +72,9 @@ export default async function Navbar() {
             alt="PT Stargate Pasific Resource"
             width={505}
             height={494}
-            priority
+            // Deliberately not `priority`: a ~44px-tall logo preloading on
+            // every page competes for bandwidth with the real LCP banner.
+            sizes="44px"
             className="h-10 w-auto object-contain sm:h-11"
           />
         </Link>

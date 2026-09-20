@@ -12,7 +12,18 @@ type Photo = {
 
 const AUTOPLAY_INTERVAL_MS = 5000;
 
-export default function ActivityCarousel({ photos }: { photos: Photo[] }) {
+export default function ActivityCarousel({
+  photos,
+  priority = false,
+}: {
+  photos: Photo[];
+  /**
+   * Preload the first slide. Only the topmost carousel should set this: the
+   * page renders one per category, and N preload hints compete with each
+   * other and with the banner above them.
+   */
+  priority?: boolean;
+}) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -62,7 +73,7 @@ export default function ActivityCarousel({ photos }: { photos: Photo[] }) {
                 fill
                 sizes="(min-width: 1024px) 800px, 100vw"
                 className="object-cover"
-                priority={i === 0}
+                priority={priority && i === 0}
               />
             </div>
           ) : null
