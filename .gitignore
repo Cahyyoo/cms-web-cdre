@@ -18,9 +18,14 @@
 npm-debug.log*
 *.zip
 diff_err.log
+Thumbs.db
 
 # user-uploaded content (runtime data, not source)
 /public/uploads/
+
+# raw photo archive: not referenced by any code and served publicly if
+# present. Banners in /public/banners are the curated copies of these.
+/public/gambar_dokumentasi_kegiatan/
 
 # typescript
 *.tsbuildinfo
