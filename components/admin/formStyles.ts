@@ -7,3 +7,9 @@ export const secondaryButtonClass =
   "rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50";
 export const fileInputClass = `${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-brand file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-brand-dark`;
 export const photoHintClass = "mt-1.5 space-y-0.5 text-xs text-slate-400";
+export const alertBaseClass =
+  "mt-4 flex items-start gap-2 rounded-md px-3 py-2 text-sm";
+export const alertSuccessClass = "bg-emerald-50 text-emerald-700";
+export const alertErrorClass = "bg-red-50 text-red-600";
+export const disabledButtonClass =
+  "disabled:cursor-not-allowed disabled:opacity-60";

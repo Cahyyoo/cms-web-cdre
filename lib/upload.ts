@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
+import type { FlashCode } from "@/lib/flash";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = new Set([
@@ -16,7 +17,22 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
   "image/gif": "gif",
 };
 
-export class UploadError extends Error {}
+/**
+ * Upload failure. Carries a flash code rather than a message so the Indonesian
+ * copy lives only in lib/flash.ts instead of being thrown, URL-encoded into a
+ * redirect, and echoed back to the page.
+ */
+export type UploadErrorCode = Extract<
+  FlashCode,
+  "upload-empty" | "upload-large" | "upload-type" | "upload-required"
+>;
+
+export class UploadError extends Error {
+  constructor(readonly code: UploadErrorCode) {
+    super(code);
+    this.name = "UploadError";
+  }
+}
 
 /**
  * Saves an uploaded image file to /public/uploads/<subfolder> and returns
@@ -27,13 +43,13 @@ export async function saveUploadedImage(
   subfolder: string
 ): Promise<string> {
   if (file.size === 0) {
-    throw new UploadError("File kosong.");
+    throw new UploadError("upload-empty");
   }
   if (file.size > MAX_FILE_SIZE) {
-    throw new UploadError("Ukuran file maksimal 5MB.");
+    throw new UploadError("upload-large");
   }
   if (!ALLOWED_TYPES.has(file.type)) {
-    throw new UploadError("Format file harus JPG, PNG, WEBP, atau GIF.");
+    throw new UploadError("upload-type");
   }
 
   const extension = EXTENSION_BY_TYPE[file.type];
@@ -75,5 +91,5 @@ export async function resolveImage(
     return saveUploadedImage(photo, subfolder);
   }
   if (fallback) return fallback;
-  throw new UploadError("Foto wajib diunggah.");
+  throw new UploadError("upload-required");
 }
