@@ -1,5 +1,9 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
+// Admin pages must always reflect the current database. Segment config
+// cascades, so this covers every route under (dashboard).
+export const dynamic = "force-dynamic";
+
 export default function AdminDashboardLayout({
   children,
 }: {

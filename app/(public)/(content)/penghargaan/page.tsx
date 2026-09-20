@@ -3,6 +3,9 @@ import GalleryGrid from "@/components/gallery/GalleryGrid";
 import PageBanner from "@/components/ui/PageBanner";
 import { getHeroImageUrl } from "@/lib/hero-images";
 
+// Gallery actions revalidate this path on save; the window is a backstop.
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Penghargaan",
   description: "Galeri penghargaan PT Stargate Pasific Resource.",

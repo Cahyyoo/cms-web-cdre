@@ -14,12 +14,6 @@ const serif = Playfair_Display({
   display: "swap",
 });
 
-// Nearly every route (public pages via Navbar/Sidebar, admin pages via
-// their data tables) queries the database on render. Force dynamic
-// rendering app-wide so `next build` doesn't attempt to prerender pages
-// against a database that may not be reachable at build time.
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: {
     default: "PT Stargate Pasific Resource",

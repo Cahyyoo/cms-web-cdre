@@ -28,6 +28,8 @@ function resolveSlug(fields: ReturnType<typeof readFields>) {
 
 function revalidate(slug?: string) {
   revalidatePath(ADMIN_PATH);
+  // StatsBar and the homepage teasers derive from this content.
+  revalidatePath("/");
   revalidatePath("/ppm");
   revalidatePath("/csr");
   if (slug) revalidatePath(`/artikel/${slug}`);

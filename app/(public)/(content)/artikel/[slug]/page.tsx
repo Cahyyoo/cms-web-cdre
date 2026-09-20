@@ -16,6 +16,10 @@ const getPost = cache(async (slug: string) =>
   })
 );
 
+// This route increments viewCount on every visit, so it must render per
+// request. Caching it would turn the counter into "views per regeneration".
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

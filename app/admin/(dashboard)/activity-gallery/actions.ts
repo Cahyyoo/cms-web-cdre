@@ -18,6 +18,8 @@ function readFields(formData: FormData) {
 
 function revalidate() {
   revalidatePath(ADMIN_PATH);
+  // StatsBar and the homepage teasers derive from this content.
+  revalidatePath("/");
   revalidatePath("/galeri-kegiatan");
 }
 

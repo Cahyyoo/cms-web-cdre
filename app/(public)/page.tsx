@@ -10,6 +10,9 @@ import { getHeroImageUrls } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 import { getSambutan } from "@/lib/sambutan";
 
+// Content actions revalidate this path on save; the window is a backstop.
+export const revalidate = 300;
+
 async function getTestimonials() {
   return prisma.testimonial.findMany({
     where: { isPublished: true },
