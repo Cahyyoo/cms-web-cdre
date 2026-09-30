@@ -36,6 +36,9 @@ export default async function Footer() {
               alt="PT Stargate Pasific Resource"
               width={505}
               height={494}
+              // Without `sizes` the browser picked a 1080px-wide variant of a
+              // logo rendered ~49px tall, on every public page.
+              sizes="49px"
               className="h-12 w-auto object-contain brightness-0 invert"
             />
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
