@@ -58,11 +58,11 @@ export default function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="mt-8 flex items-center justify-center gap-2">
+    <nav className="mt-12 flex items-center justify-center gap-2">
       <Link
         href={buildHref(basePath, Math.max(1, page - 1), extraQuery)}
         aria-disabled={page <= 1}
-        className={`flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 ${
+        className={`flex h-9 w-9 items-center justify-center rounded-lg bg-cream-dark text-brand hover:bg-brand/10 ${
           page <= 1 ? "pointer-events-none opacity-40" : ""
         }`}
       >
@@ -74,7 +74,7 @@ export default function Pagination({
           <span
             key={`gap-${i}`}
             aria-hidden="true"
-            className="flex h-9 w-9 items-center justify-center text-sm text-slate-400"
+            className="flex h-9 w-9 items-center justify-center text-sm text-stone-400"
           >
             &hellip;
           </span>
@@ -83,10 +83,10 @@ export default function Pagination({
             key={item}
             href={buildHref(basePath, item, extraQuery)}
             aria-current={item === page ? "page" : undefined}
-            className={`flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium ${
+            className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium ${
               item === page
                 ? "bg-brand text-white"
-                : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                : "bg-cream-dark text-stone-600 hover:bg-brand/10"
             }`}
           >
             {item}
@@ -97,7 +97,7 @@ export default function Pagination({
       <Link
         href={buildHref(basePath, Math.min(totalPages, page + 1), extraQuery)}
         aria-disabled={page >= totalPages}
-        className={`flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 ${
+        className={`flex h-9 w-9 items-center justify-center rounded-lg bg-cream-dark text-brand hover:bg-brand/10 ${
           page >= totalPages ? "pointer-events-none opacity-40" : ""
         }`}
       >

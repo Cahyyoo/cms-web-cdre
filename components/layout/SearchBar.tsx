@@ -22,12 +22,12 @@ export default function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Cari artikel, produk..."
-        className="w-40 rounded-full border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-sm text-slate-700 outline-none transition-all focus:w-56 focus:border-brand focus:bg-white sm:w-48 sm:focus:w-64"
+        className="w-40 rounded-lg border border-brand/10 bg-white/60 py-2 pl-8 pr-3 text-sm text-stone-700 placeholder:text-stone-400 group-data-[transparent=true]/nav:border-white/25 group-data-[transparent=true]/nav:bg-white/15 group-data-[transparent=true]/nav:text-white group-data-[transparent=true]/nav:placeholder:text-white/70 outline-none transition-all focus:w-56 focus:border-brand focus:bg-white sm:w-48 sm:focus:w-64"
       />
       <Search
         size={14}
         strokeWidth={2.25}
-        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 group-data-[transparent=true]/nav:text-white/80"
       />
     </form>
   );

@@ -28,6 +28,8 @@ function readFields(formData: FormData) {
 function revalidate() {
   revalidateTag(CACHE_TAGS.nav);
   revalidatePath(ADMIN_PATH);
+  // Category names also appear on the homepage's featured-post cards.
+  revalidatePath("/");
   revalidatePath("/ppm");
   revalidatePath("/csr");
 }

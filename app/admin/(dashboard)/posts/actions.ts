@@ -19,7 +19,10 @@ function readFields(formData: FormData) {
     slug: readString(formData, "slug"),
     content: readString(formData, "content"),
     categoryId: readInt(formData, "categoryId"),
-    publishedAt: new Date(readString(formData, "publishedAt")),
+    // A bare "YYYY-MM-DD" parses as UTC midnight, i.e. 07:00 WIB — which would
+    // keep an article dated today hidden all morning (see publishedFilter).
+    // The explicit time makes it local midnight instead.
+    publishedAt: new Date(`${readString(formData, "publishedAt")}T00:00:00`),
   };
 }
 
@@ -29,7 +32,7 @@ function resolveSlug(fields: ReturnType<typeof readFields>) {
 
 function revalidate(slug?: string) {
   revalidatePath(ADMIN_PATH);
-  // StatsBar and the homepage teasers derive from this content.
+  // FeaturedPosts on the homepage derives from this content.
   revalidatePath("/");
   revalidatePath("/ppm");
   revalidatePath("/csr");

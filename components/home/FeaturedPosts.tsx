@@ -1,23 +1,31 @@
-import { ArrowRight } from "lucide-react";
+import { CalendarDays, Eye, Tag } from "lucide-react";
 import Link from "next/link";
-import PostCard from "@/components/blog/PostCard";
+import Image from "@/components/ui/AppImage";
+import PillButton from "@/components/ui/PillButton";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { prisma } from "@/lib/prisma";
+import { publishedFilter } from "@/lib/posts";
+import { excerpt, formatDate, formatViews } from "@/lib/utils";
 
 async function getLatestPosts() {
-  return prisma.post.findMany({
-    // PostCard needs six fields; `include` also fetched the @db.Text body.
+  const posts = await prisma.post.findMany({
+    where: publishedFilter(),
     select: {
       id: true,
       slug: true,
       title: true,
+      // Only for the teaser; reduced to plain text below so the HTML body
+      // never reaches the page.
+      content: true,
       thumbnailUrl: true,
       publishedAt: true,
       viewCount: true,
-      category: { select: { name: true } },
+      category: { select: { name: true, type: true } },
     },
     orderBy: { publishedAt: "desc" },
-    take: 3,
+    take: 2,
   });
+  return posts.map(({ content, ...post }) => ({ ...post, teaser: excerpt(content) }));
 }
 
 export default async function FeaturedPosts() {
@@ -25,44 +33,73 @@ export default async function FeaturedPosts() {
   if (posts.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-brand">
-            Publikasi
-          </p>
-          <h2 className="mt-2 font-serif text-3xl font-semibold text-slate-900 sm:text-4xl">
-            Kabar Terbaru CSR &amp; PPM
-          </h2>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/csr"
-            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-brand hover:text-brand"
+    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <SectionHeading
+        align="center"
+        badge="Publikasi"
+        title="Kabar Terbaru dari Program Kami"
+      />
+
+      <div className="mt-14 space-y-8">
+        {posts.map((post) => (
+          <article
+            key={post.id}
+            data-reveal
+            className="grid grid-cols-1 items-center gap-8 rounded-3xl bg-cream-dark/70 p-5 sm:p-6 md:grid-cols-2 lg:gap-12"
           >
-            Lihat CSR
-          </Link>
-          <Link
-            href="/ppm"
-            className="flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
-          >
-            Lihat PPM <ArrowRight size={14} />
-          </Link>
-        </div>
+            <div className="order-2 px-1 pb-2 md:order-1 md:px-4">
+              <h3 className="font-serif text-2xl font-medium leading-snug text-brand-dark sm:text-3xl">
+                {post.title}
+              </h3>
+              {post.teaser && (
+                <p className="mt-3 text-sm leading-relaxed text-stone-500">{post.teaser}</p>
+              )}
+              <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-2 border-t border-brand/10 pt-5 text-sm text-stone-600 sm:grid-cols-2">
+                <li className="flex items-center gap-2">
+                  <Tag size={14} className="text-brand" />
+                  {post.category.type} · {post.category.name}
+                </li>
+                <li className="flex items-center gap-2">
+                  <CalendarDays size={14} className="text-brand" />
+                  {formatDate(post.publishedAt)}
+                </li>
+                <li className="flex items-center gap-2">
+                  <Eye size={14} className="text-brand" />
+                  Dilihat {formatViews(post.viewCount)} kali
+                </li>
+              </ul>
+              <PillButton href={`/artikel/${post.slug}`} className="mt-8">
+                Baca Selengkapnya
+              </PillButton>
+            </div>
+
+            {/* Same target as the button, so it stays out of the tab order. */}
+            <Link
+              href={`/artikel/${post.slug}`}
+              tabIndex={-1}
+              data-cursor="Baca"
+              data-reveal="zoom"
+              className="group relative order-1 block aspect-[4/3] overflow-hidden rounded-2xl md:order-2"
+            >
+              <Image
+                src={post.thumbnailUrl}
+                alt={post.title}
+                data-reveal-media
+                fill
+                sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <span className="absolute left-4 top-4 rounded-lg bg-brand px-3 py-1.5 text-sm text-white">
+                {post.category.name}
+              </span>
+            </Link>
+          </article>
+        ))}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            slug={post.slug}
-            title={post.title}
-            thumbnailUrl={post.thumbnailUrl}
-            publishedAt={post.publishedAt}
-            viewCount={post.viewCount}
-            categoryName={post.category.name}
-          />
-        ))}
+      <div data-reveal className="mt-12 flex flex-wrap justify-center gap-3">
+        <PillButton href="/csr">Semua Publikasi CSR</PillButton>
+        <PillButton href="/ppm">Semua Program PPM</PillButton>
       </div>
     </section>
   );

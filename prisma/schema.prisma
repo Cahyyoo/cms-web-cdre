@@ -31,6 +31,13 @@ enum HeroSlot {
   BINAAN_BANNER
   PENGHARGAAN_BANNER
   GALERI_KEGIATAN_BANNER
+  HOME_COLLAGE_2
+  HOME_COLLAGE_3
+  HOME_BINAAN_PANEL
+  HOME_FAQ
+  HOME_CTA_CSR
+  HOME_CTA_PPM
+  HOME_CTA_BINAAN
 }
 
 // ---------------------------------------------------------------------------
@@ -150,6 +157,8 @@ model ActivityPhoto {
   caption    String?
   imageUrl   String
   order      Int              @default(0)
+  // Picked by an admin for the photo strips on the homepage and footer.
+  showOnHome Boolean          @default(false)
   categoryId Int
   category   ActivityCategory @relation(fields: [categoryId], references: [id])
   createdAt  DateTime         @default(now())

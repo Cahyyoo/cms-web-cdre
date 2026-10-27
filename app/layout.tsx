@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const sans = Plus_Jakarta_Sans({
@@ -8,7 +8,7 @@ const sans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const serif = Playfair_Display({
+const serif = Fraunces({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",

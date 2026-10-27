@@ -1,18 +1,21 @@
 import { ArrowLeft, Eye } from "lucide-react";
-import Image from "next/image";
+import Image from "@/components/ui/AppImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { publishedFilter } from "@/lib/posts";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import { formatDate, formatViews } from "@/lib/utils";
 
 // `generateMetadata` and the page both need the article; React's `cache`
 // collapses them into a single query per request.
 const getPost = cache(async (slug: string) =>
-  prisma.post.findUnique({
-    where: { slug },
+  // findFirst rather than findUnique: the publish-date condition isn't part
+  // of the unique key. A scheduled article 404s until its date.
+  prisma.post.findFirst({
+    where: { slug, ...publishedFilter() },
     include: { category: true },
   })
 );
@@ -56,25 +59,25 @@ export default async function ArticleDetailPage({
     <article className="mx-auto max-w-3xl">
       <Link
         href={backHref}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-brand"
+        className="mb-8 flex w-fit items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-brand"
       >
         <ArrowLeft size={14} /> Kembali ke {post.category.type}
       </Link>
 
-      <span className="inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
+      <span className="inline-block rounded-lg bg-brand/[0.06] px-3 py-1.5 text-sm text-brand">
         {post.category.name}
       </span>
-      <h1 className="mt-3 font-serif text-2xl font-semibold leading-tight text-slate-900 sm:text-4xl">
+      <h1 className="mt-4 font-serif text-3xl font-medium leading-tight text-brand-dark sm:text-5xl">
         {post.title}
       </h1>
-      <div className="mt-3 flex items-center gap-3 text-xs text-slate-400">
+      <div className="mt-4 flex items-center gap-3 text-sm text-stone-500">
         <span>{formatDate(post.publishedAt)}</span>
         <span className="flex items-center gap-1">
           <Eye size={12} /> {formatViews(post.viewCount)} views
         </span>
       </div>
 
-      <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-xl bg-slate-100">
+      <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-3xl bg-cream-dark">
         <Image
           src={post.thumbnailUrl}
           alt={post.title}
@@ -86,7 +89,7 @@ export default async function ArticleDetailPage({
 
       {/* Stored as CKEditor HTML; sanitised on render — see lib/sanitize.ts */}
       <div
-        className="prose prose-slate mt-8 max-w-none"
+        className="prose prose-stone mt-10 max-w-none prose-headings:font-serif prose-headings:font-medium prose-headings:text-brand-dark prose-a:text-brand"
         dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(post.content) }}
       />
     </article>

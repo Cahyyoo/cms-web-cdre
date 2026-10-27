@@ -5,6 +5,15 @@ import DeleteButton from "@/components/admin/DeleteButton";
 import { prisma } from "@/lib/prisma";
 import { deleteBinaanGroup } from "./actions";
 import FormAlert from "@/components/ui/FormAlert";
+import {
+  addButtonClass,
+  editLinkClass,
+  pageHeaderClass,
+  rowClass,
+  tableClass,
+  tableWrapClass,
+  theadClass,
+} from "@/components/admin/formStyles";
 
 export const metadata: Metadata = {
   title: "Kelompok Binaan",
@@ -26,7 +35,7 @@ export default async function BinaanGroupsPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className={pageHeaderClass}>
         <div>
           <h1 className="text-xl font-bold text-slate-900">Kelompok Binaan</h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -35,7 +44,7 @@ export default async function BinaanGroupsPage({
         </div>
         <Link
           href="/admin/binaan-groups/new"
-          className="flex items-center gap-1.5 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
+          className={addButtonClass}
         >
           <Plus size={16} /> Tambah
         </Link>
@@ -43,9 +52,9 @@ export default async function BinaanGroupsPage({
 
       <FormAlert code={searchParams.flash} />
 
-      <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-100 text-xs uppercase text-slate-400">
+      <div className={tableWrapClass}>
+        <table className={tableClass}>
+          <thead className={theadClass}>
             <tr>
               <th className="px-4 py-3">Nama Kelompok</th>
               <th className="px-4 py-3">Jumlah Produk</th>
@@ -54,14 +63,14 @@ export default async function BinaanGroupsPage({
           </thead>
           <tbody className="divide-y divide-slate-100">
             {groups.map((item) => (
-              <tr key={item.id}>
-                <td className="px-4 py-3 font-medium text-slate-800">{item.name}</td>
+              <tr key={item.id} className={rowClass}>
+                <td className="max-w-xs truncate px-4 py-3 font-medium text-slate-800">{item.name}</td>
                 <td className="px-4 py-3 text-slate-500">{item._count.products}</td>
                 <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-2 whitespace-nowrap">
                     <Link
                       href={`/admin/binaan-groups/${item.id}`}
-                      className="rounded-md px-2 py-1 text-xs font-medium text-brand hover:bg-brand/10"
+                      className={editLinkClass}
                     >
                       Edit
                     </Link>

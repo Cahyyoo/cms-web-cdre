@@ -13,7 +13,7 @@ export const metadata: Metadata = {
  * Every photo of every category used to be loaded and serialized into the RSC
  * payload for the carousels, growing without bound as the archive grew.
  */
-const MAX_PHOTOS_PER_CATEGORY = 20;
+const MAX_PHOTOS_PER_CATEGORY = 50;
 
 async function getActivityCategories(categoryId?: number) {
   return prisma.activityCategory.findMany({
@@ -46,6 +46,7 @@ export default async function GaleriKegiatanPage({
     <div>
       <div className="mb-10">
         <PageBanner
+          badge="Dokumentasi"
           src={bannerUrl}
           alt="Dokumentasi kegiatan pemberdayaan masyarakat PT Stargate Pasific Resource"
           title="Galeri Kegiatan"
@@ -54,12 +55,12 @@ export default async function GaleriKegiatanPage({
       </div>
 
       {categories.length === 0 ? (
-        <p className="text-sm text-slate-400">Belum ada kategori kegiatan untuk ditampilkan.</p>
+        <p className="text-sm text-stone-400">Belum ada kategori kegiatan untuk ditampilkan.</p>
       ) : (
         <div className="space-y-14">
           {categories.map((category, i) => (
             <section key={category.id} id={`kategori-${category.id}`}>
-              <h2 className="mb-4 font-serif text-xl font-semibold text-slate-900 sm:text-2xl">
+              <h2 className="mb-5 font-serif text-2xl font-medium text-brand sm:text-3xl">
                 {category.name}
               </h2>
               <ActivityCarousel

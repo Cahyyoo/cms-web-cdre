@@ -4,15 +4,25 @@ import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Metadata for each fixed hero/banner placement on the public site.
- * Rows for every slot are created by the `add_hero_images` migration;
- * `defaultImageUrl` is only a defensive fallback in case a row is ever
- * missing (e.g. a fresh DB that skipped seeding).
+ * Metadata for each fixed hero/banner placement on the public site, in the
+ * order they appear (homepage top to bottom, then the section pages).
+ * Rows for every slot are created by the `add_hero_images` and
+ * `home_image_slots` migrations; `defaultImageUrl` is only a defensive
+ * fallback in case a row is ever missing (e.g. a fresh DB that skipped
+ * seeding). Every homepage placement has its own slot so an admin can give
+ * each one a different photo.
  */
 export const HERO_SLOTS: Record<
   HeroSlot,
   {
     label: string;
+    /**
+     * "home": a homepage placement; "page": a section page banner;
+     * "retired": no longer shown on the site (its section was removed), so
+     * the admin hides it. Kept so the stored row and enum value survive if
+     * the section comes back.
+     */
+    group: "home" | "page" | "retired";
     page: string;
     recommendedSize: string;
     hint: string;
@@ -21,20 +31,79 @@ export const HERO_SLOTS: Record<
 > = {
   HOME_HERO: {
     label: "Hero Beranda",
-    page: "/ (Beranda) — banner utama di bagian atas",
+    group: "home",
+    page: "Beranda — foto utama layar penuh di bagian paling atas",
     recommendedSize: "1920×1080px (rasio 16:9)",
     hint: "Gambar lanskap, minimal lebar 1600px — akan dipotong penuh satu layar (object-cover).",
     defaultImageUrl: "/banners/hero-sehat-bareng.jpg",
   },
   HOME_SAMBUTAN: {
-    label: "Gambar Sambutan Beranda",
-    page: "/ (Beranda) — bagian \"Sambutan\"",
+    label: "Kolase Foto 1",
+    group: "retired",
+    page: "Beranda — kolase di bawah kutipan sambutan, foto kiri (paling besar)",
     recommendedSize: "1200×900px (rasio 4:3)",
-    hint: "Gambar lanskap/potret rasio 4:3, minimal lebar 1000px.",
+    hint: "Gambar lanskap rasio 4:3, minimal lebar 1000px.",
+    defaultImageUrl: "/banners/bantuan-hewan-qurban.jpg",
+  },
+  HOME_COLLAGE_2: {
+    label: "Kolase Foto 2",
+    group: "retired",
+    page: "Beranda — kolase di bawah kutipan sambutan, foto tengah",
+    recommendedSize: "1000×1000px (persegi)",
+    hint: "Gambar persegi, minimal 800×800px. Bagian tengah foto yang akan terlihat.",
+    defaultImageUrl: "/banners/kegiatan-kesehatan.jpg",
+  },
+  HOME_COLLAGE_3: {
+    label: "Kolase Foto 3",
+    group: "retired",
+    page: "Beranda — kolase di bawah kutipan sambutan, foto kanan",
+    recommendedSize: "1200×900px (rasio 4:3)",
+    hint: "Gambar lanskap rasio 4:3 (tampil persegi di HP), minimal lebar 1000px.",
+    defaultImageUrl: "/banners/perbaikan-jalan-molore.jpg",
+  },
+  HOME_BINAAN_PANEL: {
+    label: "Latar Panel UMKM Binaan",
+    group: "retired",
+    page: "Beranda — foto latar layar penuh di bagian \"Pemberdayaan UMKM Binaan\"",
+    recommendedSize: "1920×1080px (rasio 16:9)",
+    hint: "Gambar lanskap, minimal lebar 1600px. Sisi kiri tertutup kartu, jadi subjek sebaiknya di kanan.",
+    defaultImageUrl: "/banners/parcel-lebaran.jpg",
+  },
+  HOME_FAQ: {
+    label: "Foto FAQ",
+    group: "retired",
+    page: "Beranda — foto di samping daftar FAQ (hanya tampil di layar lebar)",
+    recommendedSize: "900×1125px (potret 4:5)",
+    hint: "Gambar potret, minimal lebar 800px.",
+    defaultImageUrl: "/banners/hero-sehat-bareng.jpg",
+  },
+  HOME_CTA_CSR: {
+    label: "Panel Ajakan — CSR",
+    group: "retired",
+    page: "Beranda — panel kiri di bagian \"Jadilah Bagian dari Perubahan\"",
+    recommendedSize: "900×1200px (potret 3:4)",
+    hint: "Gambar potret, minimal lebar 800px. Teks putih tampil di bagian bawah foto.",
+    defaultImageUrl: "/banners/perbaikan-jalan-polora.jpg",
+  },
+  HOME_CTA_PPM: {
+    label: "Panel Ajakan — PPM",
+    group: "retired",
+    page: "Beranda — panel tengah di bagian \"Jadilah Bagian dari Perubahan\"",
+    recommendedSize: "900×1200px (potret 3:4)",
+    hint: "Gambar potret, minimal lebar 800px. Teks putih tampil di bagian bawah foto.",
+    defaultImageUrl: "/banners/bantuan-dana-pendidikan.jpg",
+  },
+  HOME_CTA_BINAAN: {
+    label: "Panel Ajakan — Binaan UMKM",
+    group: "retired",
+    page: "Beranda — panel kanan di bagian \"Jadilah Bagian dari Perubahan\"",
+    recommendedSize: "900×1200px (potret 3:4)",
+    hint: "Gambar potret, minimal lebar 800px. Teks putih tampil di bagian bawah foto.",
     defaultImageUrl: "/banners/bantuan-hewan-qurban.jpg",
   },
   PPM_BANNER: {
     label: "Banner PPM",
+    group: "page",
     page: "/ppm — banner judul halaman",
     recommendedSize: "1600×600px (rasio ~8:3)",
     hint: "Gambar lanskap lebar, minimal lebar 1400px.",
@@ -42,6 +111,7 @@ export const HERO_SLOTS: Record<
   },
   CSR_BANNER: {
     label: "Banner CSR",
+    group: "page",
     page: "/csr — banner judul halaman",
     recommendedSize: "1600×600px (rasio ~8:3)",
     hint: "Gambar lanskap lebar, minimal lebar 1400px.",
@@ -49,6 +119,7 @@ export const HERO_SLOTS: Record<
   },
   BINAAN_BANNER: {
     label: "Banner Binaan UMKM",
+    group: "page",
     page: "/binaan — banner judul halaman",
     recommendedSize: "1600×600px (rasio ~8:3)",
     hint: "Gambar lanskap lebar, minimal lebar 1400px.",
@@ -56,6 +127,7 @@ export const HERO_SLOTS: Record<
   },
   PENGHARGAAN_BANNER: {
     label: "Banner Penghargaan",
+    group: "page",
     page: "/penghargaan — banner judul halaman",
     recommendedSize: "1600×600px (rasio ~8:3)",
     hint: "Gambar lanskap lebar, minimal lebar 1400px.",
@@ -63,6 +135,7 @@ export const HERO_SLOTS: Record<
   },
   GALERI_KEGIATAN_BANNER: {
     label: "Banner Galeri Kegiatan",
+    group: "page",
     page: "/galeri-kegiatan — banner judul halaman",
     recommendedSize: "1600×600px (rasio ~8:3)",
     hint: "Gambar lanskap lebar, minimal lebar 1400px.",

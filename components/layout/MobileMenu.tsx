@@ -19,21 +19,21 @@ export default function MobileMenu({ groups }: { groups: NavGroup[] }) {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Tutup menu" : "Buka menu"}
-        className="flex h-9 w-9 items-center justify-center rounded-md text-slate-700 hover:bg-slate-100"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-brand-dark hover:bg-cream-dark group-data-[transparent=true]/nav:text-white group-data-[transparent=true]/nav:hover:bg-white/10"
       >
         {open ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       {open && (
-        <div className="absolute inset-x-0 top-full max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-100 bg-white shadow-lg">
-          <ul className="divide-y divide-slate-100 px-4">
+        <div className="absolute inset-x-0 top-full max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-brand/10 bg-cream shadow-lg">
+          <ul className="divide-y divide-brand/10 px-4">
             {groups.map((group) => (
               <li key={group.label}>
                 {group.href ? (
                   <Link
                     href={group.href}
                     onClick={() => setOpen(false)}
-                    className="block py-3.5 text-sm font-medium text-slate-700"
+                    className="block py-3.5 font-serif text-base text-brand-dark"
                   >
                     {group.label}
                   </Link>
@@ -43,7 +43,7 @@ export default function MobileMenu({ groups }: { groups: NavGroup[] }) {
                       onClick={() =>
                         setExpanded((cur) => (cur === group.label ? null : group.label))
                       }
-                      className="flex w-full items-center justify-between py-3.5 text-sm font-medium text-slate-700"
+                      className="flex w-full items-center justify-between py-3.5 font-serif text-base text-brand-dark"
                     >
                       {group.label}
                       <ChevronDown
@@ -58,7 +58,7 @@ export default function MobileMenu({ groups }: { groups: NavGroup[] }) {
                             <Link
                               href={item.href}
                               onClick={() => setOpen(false)}
-                              className="block py-2 text-sm text-slate-500 hover:text-brand"
+                              className="block py-2 text-sm text-stone-500 hover:text-brand"
                             >
                               {item.label}
                             </Link>

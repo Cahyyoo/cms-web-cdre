@@ -16,4 +16,6 @@ export const CACHE_TAGS = {
   sambutan: "sambutan",
   /** Hero/banner images per slot. */
   hero: "hero",
+  /** Latest activity photos for the homepage and footer photo strips. */
+  activityPhotos: "activity-photos",
 } as const;

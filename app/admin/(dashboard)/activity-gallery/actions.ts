@@ -1,10 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { runAction } from "@/lib/action-helpers";
+import { CACHE_TAGS } from "@/lib/cache-tags";
 import { prisma } from "@/lib/prisma";
 import { deleteUploadedImage, resolveImage } from "@/lib/upload";
-import { readInt, readString } from "@/lib/forms";
+import { readBoolean, readInt, readString } from "@/lib/forms";
 
 const ADMIN_PATH = "/admin/activity-gallery";
 
@@ -14,13 +15,14 @@ function readFields(formData: FormData) {
     caption: caption ? caption : null,
     categoryId: readInt(formData, "categoryId"),
     order: readInt(formData, "order"),
+    showOnHome: readBoolean(formData, "showOnHome"),
   };
 }
 
 function revalidate() {
+  // Photo strips on the homepage and footer.
+  revalidateTag(CACHE_TAGS.activityPhotos);
   revalidatePath(ADMIN_PATH);
-  // StatsBar and the homepage teasers derive from this content.
-  revalidatePath("/");
   revalidatePath("/galeri-kegiatan");
 }
 

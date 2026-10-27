@@ -66,10 +66,11 @@ Panel admin untuk mengelola seluruh konten dinamis tanpa Prisma Studio: Testimon
 - `app/admin/login/` — Halaman & Server Actions login/logout (di luar shell sidebar admin).
 - `app/admin/(dashboard)/` — Dashboard + CRUD tiap resource (`categories`, `posts`, `binaan-groups`, `products`, `gallery`, `testimonials`, `activity-categories`, `activity-gallery`, `hero-images`, `sambutan`, `footer`), dibungkus `components/admin/AdminSidebar.tsx`. `hero-images` bukan CRUD penuh — hanya `list` dan `[slot]/page.tsx` (edit) karena slot-nya tetap, tanpa `new`/delete. `sambutan` dan `footer` malah lebih sederhana lagi — cuma satu halaman form settings, tanpa list sama sekali.
 - `components/admin/` — `AdminSidebar`, `DeleteButton` (tombol hapus + confirm), `PhotoRequirements`, `RichTextEditor`/`RichTextEditorInner` (editor CKEditor 5 untuk field HTML, lihat catatan di bawah), `formStyles.ts` (kelas Tailwind form bersama).
-- `components/home/` — Bagian-bagian halaman Beranda: `FeaturedPosts`, `BinaanTeaser`, `StatsBar`, `TestimonialSlider`.
+- `components/home/` — Bagian-bagian halaman Beranda: `FeaturedPosts`, `TestimonialSlider`.
 - `components/gallery/ActivityCarousel.tsx` — Carousel foto Galeri Kegiatan per kategori.
 - `components/layout/` — `Navbar`, `MobileMenu`, `Footer` publik.
 - `components/ui/PageBanner.tsx` — Banner judul halaman untuk route di `(content)`.
+- `components/ui/ScrollReveal.tsx` — Animasi muncul saat di-scroll untuk elemen bertanda `data-reveal` (stagger via `revealProps()` di `lib/utils.ts`); dipasang sekali di layout publik. Animasi saat halaman dimuat (hero, banner) memakai kelas `animate-*` dari `tailwind.config.ts`.
 
 ## Catatan
 

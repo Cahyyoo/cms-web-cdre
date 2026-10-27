@@ -1,13 +1,33 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { HERO_SLOT_ORDER, HERO_SLOTS } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
+import TableThumbnail from "@/components/admin/TableThumbnail";
 import FormAlert from "@/components/ui/FormAlert";
+import {
+  editLinkClass,
+  rowClass,
+  tableClass,
+  tableWrapClass,
+  theadClass,
+} from "@/components/admin/formStyles";
 
 export const metadata: Metadata = {
   title: "Gambar Hero & Banner",
 };
+
+const SECTIONS = [
+  {
+    group: "home",
+    title: "Foto Beranda",
+    description: "Foto yang tampil di beranda.",
+  },
+  {
+    group: "page",
+    title: "Banner Halaman",
+    description: "Banner judul di bagian atas halaman CSR, PPM, Binaan, Penghargaan dan Galeri Kegiatan.",
+  },
+] as const;
 
 async function getHeroImages() {
   const rows = await prisma.heroImage.findMany();
@@ -39,44 +59,50 @@ export default async function HeroImagesAdminPage({
 
       <FormAlert code={searchParams.flash} />
 
-      <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-100 text-xs uppercase text-slate-400">
-            <tr>
-              <th className="px-4 py-3">Gambar</th>
-              <th className="px-4 py-3">Lokasi</th>
-              <th className="px-4 py-3">Rekomendasi Ukuran</th>
-              <th className="px-4 py-3 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {items.map((item) => (
-              <tr key={item.slot}>
-                <td className="px-4 py-3">
-                  <div className="relative h-12 w-20 overflow-hidden rounded-md bg-slate-100">
-                    <Image src={item.imageUrl} alt={item.label} fill sizes="80px" className="object-cover" />
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <p className="font-medium text-slate-800">{item.label}</p>
-                  <p className="text-xs text-slate-400">{item.page}</p>
-                </td>
-                <td className="px-4 py-3 text-slate-500">{item.recommendedSize}</td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Link
-                      href={`/admin/hero-images/${item.slot}`}
-                      className="rounded-md px-2 py-1 text-xs font-medium text-brand hover:bg-brand/10"
-                    >
-                      Ganti Gambar
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {SECTIONS.map((section) => (
+        <section key={section.group} className="mt-8">
+          <h2 className="text-base font-semibold text-slate-900">{section.title}</h2>
+          <p className="mt-0.5 text-sm text-slate-500">{section.description}</p>
+          <div className={tableWrapClass}>
+            <table className={tableClass}>
+              <thead className={theadClass}>
+                <tr>
+                  <th className="px-4 py-3">Gambar</th>
+                  <th className="px-4 py-3">Lokasi</th>
+                  <th className="px-4 py-3">Rekomendasi Ukuran</th>
+                  <th className="px-4 py-3 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {items
+                  .filter((item) => item.group === section.group)
+                  .map((item) => (
+                    <tr key={item.slot} className={rowClass}>
+                      <td className="px-4 py-3">
+                        <TableThumbnail src={item.imageUrl} alt={item.label} variant="wide" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <p className="font-medium text-slate-800">{item.label}</p>
+                        <p className="text-xs text-slate-400">{item.page}</p>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500">{item.recommendedSize}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex justify-end gap-2 whitespace-nowrap">
+                          <Link
+                            href={`/admin/hero-images/${item.slot}`}
+                            className={editLinkClass}
+                          >
+                            Ganti Gambar
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

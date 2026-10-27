@@ -15,7 +15,17 @@ const ALLOWED_TYPES = new Set([
 const MAX_WIDTH = 1920;
 const WEBP_QUALITY = 80;
 
-const UPLOAD_ROOT = path.join(process.cwd(), "public", "uploads");
+const UPLOAD_ROOT = path.resolve(process.cwd(), "public", "uploads");
+
+/**
+ * Maps a path relative to /uploads (e.g. "posts/<uuid>.webp") to its file on
+ * disk, or null if it would resolve outside the upload folder — so a crafted
+ * "../" can never reach the rest of the filesystem.
+ */
+export function resolveUploadPath(relative: string): string | null {
+  const target = path.resolve(UPLOAD_ROOT, relative);
+  return target.startsWith(UPLOAD_ROOT + path.sep) ? target : null;
+}
 
 /**
  * Upload failure. Carries a flash code rather than a message so the Indonesian
@@ -89,12 +99,8 @@ export async function deleteUploadedImage(
 ): Promise<void> {
   if (!imageUrl?.startsWith("/uploads/")) return;
 
-  const target = path.resolve(
-    UPLOAD_ROOT,
-    "." + imageUrl.slice("/uploads".length)
-  );
-  const root = path.resolve(UPLOAD_ROOT);
-  if (target !== root && !target.startsWith(root + path.sep)) return;
+  const target = resolveUploadPath(imageUrl.slice("/uploads/".length));
+  if (!target) return;
 
   try {
     await unlink(target);

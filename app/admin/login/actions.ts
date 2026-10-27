@@ -10,6 +10,10 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/session";
+import { BASE_PATH } from "@/lib/base-path";
+
+// Scoped to the app's prefix: the host serves other apps beside /web-cdre.
+const COOKIE_PATH = BASE_PATH || "/";
 
 /**
  * `next` reaches us from a query string, so an attacker can craft
@@ -49,7 +53,7 @@ export async function login(formData: FormData) {
     httpOnly: true,
     secure: isSecureCookie(),
     sameSite: "lax",
-    path: "/",
+    path: COOKIE_PATH,
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
 
@@ -57,6 +61,6 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
-  cookies().delete(SESSION_COOKIE);
+  cookies().delete({ name: SESSION_COOKIE, path: COOKIE_PATH });
   redirect("/admin/login");
 }

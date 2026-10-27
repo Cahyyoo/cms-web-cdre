@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
+import Image from "@/components/ui/AppImage";
 import { useEffect, useState } from "react";
 
 type Photo = {
@@ -36,7 +36,7 @@ export default function ActivityCarousel({
   }, [photos.length, paused]);
 
   if (photos.length === 0) {
-    return <p className="text-sm text-slate-400">Belum ada foto untuk kategori ini.</p>;
+    return <p className="text-sm text-stone-400">Belum ada foto untuk kategori ini.</p>;
   }
 
   const current = photos[index];
@@ -54,7 +54,7 @@ export default function ActivityCarousel({
 
   return (
     <div
-      className="group relative overflow-hidden rounded-2xl bg-slate-100"
+      className="group relative overflow-hidden rounded-3xl bg-cream-dark"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -90,14 +90,14 @@ export default function ActivityCarousel({
           <button
             onClick={() => goTo(index - 1)}
             aria-label="Foto sebelumnya"
-            className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-white"
+            className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg bg-cream/90 text-brand opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-cream"
           >
             <ChevronLeft size={18} />
           </button>
           <button
             onClick={() => goTo(index + 1)}
             aria-label="Foto berikutnya"
-            className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-white"
+            className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg bg-cream/90 text-brand opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-cream"
           >
             <ChevronRight size={18} />
           </button>

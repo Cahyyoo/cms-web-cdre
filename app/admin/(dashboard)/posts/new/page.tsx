@@ -4,6 +4,7 @@ import PhotoRequirements from "@/components/admin/PhotoRequirements";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
+import { toDateInputValue } from "@/lib/utils";
 import { createPost } from "../actions";
 import FormAlert from "@/components/ui/FormAlert";
 import SubmitButton from "@/components/ui/SubmitButton";
@@ -22,7 +23,7 @@ export default async function NewPostPage({
   searchParams: { flash?: string };
 }) {
   const categories = await getCategories();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = toDateInputValue(new Date());
 
   return (
     <div className="max-w-2xl">

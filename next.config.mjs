@@ -1,5 +1,15 @@
+// Served behind a shared host at stargate.appinternal.com/web-cdre, whose
+// proxy forwards the prefix as-is. Set BASE_PATH="" to run at the domain root.
+const basePath = process.env.BASE_PATH ?? "/web-cdre";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath,
+  // next/image does not prefix local `src` paths with basePath; lib/base-path.ts
+  // reads this to do it (inlined at build time, so client code sees it too).
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
   // The default "X-Powered-By: Next.js" header just advertises the stack.
   poweredByHeader: false,
   experimental: {

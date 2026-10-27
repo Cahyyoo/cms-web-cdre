@@ -3,12 +3,21 @@ import type { CategoryType } from "@prisma/client";
 
 const PAGE_SIZE = 8;
 
+/**
+ * Posts dated in the future stay hidden from the public site until that date,
+ * so an admin can schedule an article ahead of time. Admin pages don't use it.
+ */
+export function publishedFilter() {
+  return { publishedAt: { lte: new Date() } };
+}
+
 export async function getPostsByType(
   type: CategoryType,
   page: number,
   categoryId?: number
 ) {
   const where = {
+    ...publishedFilter(),
     category: {
       type,
       ...(categoryId ? { id: categoryId } : {}),

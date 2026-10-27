@@ -27,8 +27,9 @@ export default async function CsrPage({
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-10">
         <PageBanner
+          badge="Publikasi"
           src={bannerUrl}
           alt="Bantuan perbaikan jalan untuk masyarakat sekitar"
           title="CSR — Corporate Social Responsibility"
@@ -37,10 +38,10 @@ export default async function CsrPage({
       </div>
 
       {posts.length === 0 ? (
-        <p className="text-sm text-slate-400">Belum ada artikel untuk ditampilkan.</p>
+        <p className="text-sm text-stone-400">Belum ada artikel untuk ditampilkan.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
+          {posts.map((post, i) => (
             <PostCard
               key={post.id}
               slug={post.slug}
@@ -49,6 +50,7 @@ export default async function CsrPage({
               publishedAt={post.publishedAt}
               viewCount={post.viewCount}
               categoryName={post.category.name}
+              revealIndex={i}
             />
           ))}
         </div>

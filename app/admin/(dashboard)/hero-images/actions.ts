@@ -13,6 +13,13 @@ const ADMIN_PATH = "/admin/hero-images";
 const REVALIDATE_PATH: Record<HeroSlot, string> = {
   HOME_HERO: "/",
   HOME_SAMBUTAN: "/",
+  HOME_COLLAGE_2: "/",
+  HOME_COLLAGE_3: "/",
+  HOME_BINAAN_PANEL: "/",
+  HOME_FAQ: "/",
+  HOME_CTA_CSR: "/",
+  HOME_CTA_PPM: "/",
+  HOME_CTA_BINAAN: "/",
   PPM_BANNER: "/ppm",
   CSR_BANNER: "/csr",
   BINAAN_BANNER: "/binaan",

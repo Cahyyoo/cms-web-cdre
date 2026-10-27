@@ -14,8 +14,6 @@ function revalidate() {
   revalidateTag(CACHE_TAGS.nav);
   revalidatePath(ADMIN_PATH);
   revalidatePath("/binaan");
-  // StatsBar counts binaan groups.
-  revalidatePath("/");
 }
 
 export async function createBinaanGroup(formData: FormData) {

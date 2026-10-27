@@ -1,39 +1,10 @@
 import { ChevronDown } from "lucide-react";
-import Image from "next/image";
+import Image from "@/components/ui/AppImage";
 import Link from "next/link";
-import { unstable_cache } from "next/cache";
 import MobileMenu, { type NavGroup } from "./MobileMenu";
+import NavbarShell from "./NavbarShell";
 import SearchBar from "./SearchBar";
-import { CACHE_TAGS } from "@/lib/cache-tags";
-import { prisma } from "@/lib/prisma";
-
-const getNavData = unstable_cache(
-  async () => {
-    const [csrCategories, ppmCategories, binaanGroups, activityCategories] = await Promise.all([
-      prisma.category.findMany({
-        where: { type: "CSR" },
-        select: { id: true, name: true },
-        orderBy: [{ order: "asc" }, { name: "asc" }],
-      }),
-      prisma.category.findMany({
-        where: { type: "PPM" },
-        select: { id: true, name: true },
-        orderBy: [{ order: "asc" }, { name: "asc" }],
-      }),
-      prisma.binaanGroup.findMany({
-        select: { id: true, name: true },
-        orderBy: { name: "asc" },
-      }),
-      prisma.activityCategory.findMany({
-        select: { id: true, name: true },
-        orderBy: [{ order: "asc" }, { name: "asc" }],
-      }),
-    ]);
-    return { csrCategories, ppmCategories, binaanGroups, activityCategories };
-  },
-  ["nav-data"],
-  { tags: [CACHE_TAGS.nav] }
-);
+import { getNavData } from "@/lib/nav";
 
 export default async function Navbar() {
   const { csrCategories, ppmCategories, binaanGroups, activityCategories } = await getNavData();
@@ -70,7 +41,7 @@ export default async function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-md">
+    <NavbarShell>
       <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
           <Image
@@ -81,7 +52,7 @@ export default async function Navbar() {
             // Deliberately not `priority`: a ~44px-tall logo preloading on
             // every page competes for bandwidth with the real LCP banner.
             sizes="44px"
-            className="h-10 w-auto object-contain sm:h-11"
+            className="h-10 w-auto object-contain transition-[filter] duration-300 sm:h-11 group-data-[transparent=true]/nav:brightness-0 group-data-[transparent=true]/nav:invert"
           />
         </Link>
 
@@ -93,22 +64,23 @@ export default async function Navbar() {
                 <li key={group.label}>
                   <Link
                     href={group.href}
-                    className="px-4 py-2 text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-brand"
+                    className="relative px-4 py-2 text-[15px] font-medium text-stone-600 transition-colors after:absolute after:inset-x-4 after:-bottom-0.5 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-brand after:transition-transform after:duration-300 hover:text-brand hover:after:scale-x-100 group-data-[transparent=true]/nav:text-white/90 group-data-[transparent=true]/nav:after:bg-white group-data-[transparent=true]/nav:hover:text-white"
                   >
                     {group.label}
                   </Link>
                 </li>
               ) : (
                 <li key={group.label} className="group relative">
-                  <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium tracking-wide text-slate-600 transition-colors hover:text-brand">
-                    {group.label} <ChevronDown size={14} />
+                  <button className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-stone-600 transition-colors hover:text-brand group-data-[transparent=true]/nav:text-white/90 group-data-[transparent=true]/nav:hover:text-white">
+                    {group.label}{" "}
+                    <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
                   </button>
-                  <div className="invisible absolute left-0 top-full w-60 rounded-xl bg-white py-2 opacity-0 shadow-2xl ring-1 ring-slate-100 transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                  <div className="invisible absolute left-0 top-full w-60 translate-y-2 rounded-2xl bg-cream py-2 opacity-0 shadow-xl shadow-brand-dark/10 ring-1 ring-brand/10 transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
                     {group.items?.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
-                        className="block px-5 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand"
+                        className="block px-5 py-2.5 text-sm text-stone-600 transition-all duration-200 hover:bg-cream-dark hover:pl-6 hover:text-brand"
                       >
                         {item.label}
                       </Link>
@@ -125,6 +97,6 @@ export default async function Navbar() {
           <MobileMenu groups={navGroups} />
         </div>
       </div>
-    </header>
+    </NavbarShell>
   );
 }

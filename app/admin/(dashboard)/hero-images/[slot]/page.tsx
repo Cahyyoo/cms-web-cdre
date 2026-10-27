@@ -1,5 +1,5 @@
 import { HeroSlot } from "@prisma/client";
-import Image from "next/image";
+import Image from "@/components/ui/AppImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";

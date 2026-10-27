@@ -11,7 +11,11 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   if (!(await isValidSessionToken(token))) {
-    const loginUrl = new URL("/admin/login", request.url);
+    // Cloning nextUrl keeps basePath; `new URL("/admin/login", request.url)`
+    // dropped it and redirected outside the app.
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/admin/login";
+    loginUrl.search = "";
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }

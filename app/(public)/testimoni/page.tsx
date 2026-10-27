@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SubmitButton from "@/components/ui/SubmitButton";
 import FormAlert from "@/components/ui/FormAlert";
+import SectionBadge from "@/components/ui/SectionBadge";
 import { submitTestimonial } from "./actions";
 
 export const metadata: Metadata = {
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
 };
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand";
-const labelClass = "mb-1 block text-sm font-medium text-slate-700";
+  "w-full rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/10";
+const labelClass = "mb-1.5 block text-sm font-medium text-brand-dark";
 
 export default function TestimoniFormPage({
   searchParams,
@@ -19,11 +20,12 @@ export default function TestimoniFormPage({
   searchParams: { flash?: string };
 }) {
   return (
-    <div className="mx-auto max-w-xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-slate-900">
+    <div className="mx-auto max-w-xl px-4 pb-24 pt-14 sm:px-6 lg:px-8">
+      <SectionBadge>Testimoni</SectionBadge>
+      <h1 className="mt-4 font-serif text-3xl font-medium text-brand sm:text-4xl">
         Bagikan Testimoni Anda
       </h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <p className="mt-3 text-sm leading-relaxed text-stone-500">
         Ceritakan pengalaman Anda bersama PT Stargate Pasific Resource.
         Testimoni akan ditinjau terlebih dahulu oleh tim kami sebelum tampil
         di halaman Beranda.
@@ -66,7 +68,7 @@ export default function TestimoniFormPage({
         <div>
           <label htmlFor="photo" className={labelClass}>
             Foto{" "}
-            <span className="font-normal text-slate-400">
+            <span className="font-normal text-stone-400">
               (opsional, maks. 5MB — JPG/PNG/WEBP/GIF)
             </span>
           </label>
@@ -75,13 +77,13 @@ export default function TestimoniFormPage({
             name="photo"
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
-            className={`${inputClass} file:mr-3 file:rounded-md file:border-0 file:bg-brand file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-brand-dark`}
+            className={`${inputClass} file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-brand-dark`}
           />
         </div>
 
         <SubmitButton
           pendingLabel="Mengirim..."
-          className="w-full rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
+          className="w-full rounded-xl bg-brand px-4 py-3 font-serif text-base font-medium text-white transition-colors hover:bg-brand-dark"
         >
           Kirim Testimoni
         </SubmitButton>
