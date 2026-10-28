@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import ImageFileInput from "@/components/ui/ImageFileInput";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateGalleryItem } from "../actions";
@@ -59,17 +60,11 @@ export default async function EditGalleryItemPage({
           <label htmlFor="photo" className={labelClass}>
             Ganti Gambar <span className="font-normal text-slate-400">(kosongkan jika tidak diganti)</span>
           </label>
-          <input
-            id="photo"
-            name="photo"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            className={fileInputClass}
-          />
+          <ImageFileInput className={fileInputClass} />
           <PhotoRequirements
             items={[
               "Format: JPG, PNG, WEBP, atau GIF",
-              "Ukuran file maksimal 5MB",
+              "Foto langsung dari kamera boleh (JPG/HEIC) — otomatis dikecilkan (maks. 60MB)",
               "Rasio bebas (potret/lanskap), minimal 600px pada sisi terpanjang",
             ]}
           />

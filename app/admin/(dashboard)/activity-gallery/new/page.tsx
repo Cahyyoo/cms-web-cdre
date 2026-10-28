@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import ImageFileInput from "@/components/ui/ImageFileInput";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { createActivityPhoto } from "../actions";
@@ -63,18 +64,11 @@ export default async function NewActivityPhotoPage({
           </div>
           <div>
             <label htmlFor="photo" className={labelClass}>Gambar</label>
-            <input
-              id="photo"
-              name="photo"
-              type="file"
-              required
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className={fileInputClass}
-            />
+            <ImageFileInput required className={fileInputClass} />
             <PhotoRequirements
               items={[
                 "Format: JPG, PNG, WEBP, atau GIF",
-                "Ukuran file maksimal 5MB",
+                "Foto langsung dari kamera boleh (JPG/HEIC) — otomatis dikecilkan (maks. 60MB)",
                 "Rasio lanskap disarankan untuk tampilan carousel",
               ]}
             />

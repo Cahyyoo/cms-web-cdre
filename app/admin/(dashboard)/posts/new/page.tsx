@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import ImageFileInput from "@/components/ui/ImageFileInput";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
@@ -64,18 +65,11 @@ export default async function NewPostPage({
           </div>
           <div>
             <label htmlFor="photo" className={labelClass}>Gambar Thumbnail</label>
-            <input
-              id="photo"
-              name="photo"
-              type="file"
-              required
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className={fileInputClass}
-            />
+            <ImageFileInput required className={fileInputClass} />
             <PhotoRequirements
               items={[
                 "Format: JPG, PNG, WEBP, atau GIF",
-                "Ukuran file maksimal 5MB",
+                "Foto langsung dari kamera boleh (JPG/HEIC) — otomatis dikecilkan (maks. 60MB)",
                 "Rekomendasi: gambar lanskap minimal 1200×800px — dipakai sebagai thumbnail kartu dan gambar utama di halaman artikel",
               ]}
             />

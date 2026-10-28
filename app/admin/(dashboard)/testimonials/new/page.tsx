@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import PhotoRequirements from "@/components/admin/PhotoRequirements";
+import ImageFileInput from "@/components/ui/ImageFileInput";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { createTestimonial } from "../actions";
 import FormAlert from "@/components/ui/FormAlert";
@@ -36,18 +37,11 @@ export default function NewTestimonialPage({
         </div>
         <div>
           <label htmlFor="photo" className={labelClass}>Foto Profil</label>
-          <input
-            id="photo"
-            name="photo"
-            type="file"
-            required
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            className={fileInputClass}
-          />
+          <ImageFileInput required className={fileInputClass} />
           <PhotoRequirements
             items={[
               "Format: JPG, PNG, WEBP, atau GIF",
-              "Ukuran file maksimal 5MB",
+              "Foto langsung dari kamera boleh (JPG/HEIC) — otomatis dikecilkan (maks. 60MB)",
               "Rasio persegi (1:1) disarankan, minimal 300x300px",
             ]}
           />

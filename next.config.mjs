@@ -14,8 +14,14 @@ const nextConfig = {
   poweredByHeader: false,
   experimental: {
     serverActions: {
-      bodySizeLimit: "10mb",
+      // Room for an unshrunk camera photo (MAX_UPLOAD_BYTES in
+      // lib/upload-limits.ts is 60MB) when the browser-side resize in
+      // ImageFileInput is unavailable.
+      bodySizeLimit: "65mb",
     },
+    // HEIC decoder (lib/upload.ts) embeds a large WebAssembly build; load it
+    // from node_modules at runtime instead of bundling it into the server.
+    serverComponentsExternalPackages: ["heic-decode", "libheif-js"],
   },
   images: {
     // Uploads live under /public/uploads and need no entry here. The wildcard

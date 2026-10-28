@@ -59,10 +59,10 @@ export const FLASH = {
     text: "Data tidak ditemukan. Mungkin sudah dihapus.",
   },
   "upload-empty": { tone: "error", text: "File kosong." },
-  "upload-large": { tone: "error", text: "Ukuran file maksimal 5MB." },
+  "upload-large": { tone: "error", text: "Ukuran file terlalu besar." },
   "upload-type": {
     tone: "error",
-    text: "Format file harus JPG, PNG, WEBP, atau GIF.",
+    text: "Format file harus JPG, PNG, WEBP, GIF, atau HEIC.",
   },
   "upload-required": { tone: "error", text: "Foto wajib diunggah." },
   "save-failed": { tone: "error", text: "Gagal menyimpan. Silakan coba lagi." },

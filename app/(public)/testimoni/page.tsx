@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import SubmitButton from "@/components/ui/SubmitButton";
 import FormAlert from "@/components/ui/FormAlert";
 import SectionBadge from "@/components/ui/SectionBadge";
+import ImageFileInput from "@/components/ui/ImageFileInput";
+import { PUBLIC_MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
 import { submitTestimonial } from "./actions";
 
 export const metadata: Metadata = {
@@ -69,14 +71,12 @@ export default function TestimoniFormPage({
           <label htmlFor="photo" className={labelClass}>
             Foto{" "}
             <span className="font-normal text-stone-400">
-              (opsional, maks. 5MB — JPG/PNG/WEBP/GIF)
+              (opsional, JPG/PNG/WEBP/HEIC — foto besar otomatis dikecilkan)
             </span>
           </label>
-          <input
-            id="photo"
-            name="photo"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
+          <ImageFileInput
+            statusClassName="mt-1.5 text-xs text-stone-500"
+            maxBytes={PUBLIC_MAX_UPLOAD_BYTES}
             className={`${inputClass} file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-brand-dark`}
           />
         </div>
