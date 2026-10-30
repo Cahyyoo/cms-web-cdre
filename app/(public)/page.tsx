@@ -1,13 +1,11 @@
 import { Suspense } from "react";
 import Image from "@/components/ui/AppImage";
 import FeaturedPosts from "@/components/home/FeaturedPosts";
-import PhotoWave from "@/components/gallery/PhotoWave";
 import TestimonialSlider from "@/components/home/TestimonialSlider";
 import PillButton from "@/components/ui/PillButton";
 import RevealText from "@/components/ui/RevealText";
 import SectionBadge from "@/components/ui/SectionBadge";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { getWavePhotos } from "@/lib/activity-photos";
 import { getHeroImageUrls } from "@/lib/hero-images";
 import { prisma } from "@/lib/prisma";
 import { getSambutan } from "@/lib/sambutan";
@@ -26,12 +24,11 @@ async function getTestimonials() {
 }
 
 export default async function HomePage() {
-  const [testimonials, images, sambutan, photos] = await Promise.all([
+  const [testimonials, images, sambutan] = await Promise.all([
     getTestimonials(),
     // Admin → Gambar Hero & Banner.
     getHeroImageUrls(["HOME_HERO"]),
     getSambutan(),
-    getWavePhotos(),
   ]);
 
   return (
@@ -141,8 +138,8 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Photo strip (the last section before the footer) */}
-      <section className="overflow-hidden pb-16 pt-12">
+      {/* Gallery call to action (the last section before the footer) */}
+      <section className="pb-24 pt-12">
         <SectionHeading
           align="center"
           badge="Galeri Kegiatan"
@@ -153,7 +150,6 @@ export default async function HomePage() {
         <div data-reveal className="mt-8 text-center">
           <PillButton href="/galeri-kegiatan">Lihat Galeri Kegiatan</PillButton>
         </div>
-        <PhotoWave photos={photos} className="mt-6" />
       </section>
     </div>
   );

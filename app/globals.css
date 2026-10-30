@@ -150,30 +150,6 @@ html.reveal-ready [data-reveal="text"]:not(.is-revealed) .rt-word {
 }
 
 /*
- * Endless photo strips (components/gallery/PhotoWave.tsx). Paused on
- * hover, and while off screen (PointerEffects toggles `.is-offscreen`) so an
- * unseen strip costs nothing.
- */
-.marquee-track {
-  animation: marquee var(--marquee-duration, 60s) linear infinite;
-}
-
-.marquee-track.is-reverse {
-  animation-direction: reverse;
-}
-
-.marquee:hover .marquee-track,
-.marquee.is-offscreen .marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/*
  * Photo reveal: the frame fades in while the image inside settles from a
  * slight zoom. Triggered by ScrollReveal like the other variants;
  * `[data-reveal-media]` marks the image to settle. Only opacity and
@@ -325,10 +301,6 @@ html.reveal-ready [data-reveal="text"]:not(.is-revealed) .rt-word {
   html.reveal-ready [data-reveal="text"]:not(.is-revealed) .rt-word {
     opacity: 1;
     transform: none;
-  }
-
-  .marquee-track {
-    animation: none;
   }
 
   .hero-parallax,

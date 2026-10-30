@@ -1,9 +1,7 @@
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import Image from "@/components/ui/AppImage";
 import Link from "next/link";
-import PhotoWave from "@/components/gallery/PhotoWave";
 import RevealText from "@/components/ui/RevealText";
-import { getWavePhotos } from "@/lib/activity-photos";
 import { getFooterSettings } from "@/lib/footer-settings";
 import { revealProps } from "@/lib/utils";
 
@@ -23,7 +21,7 @@ const NAV_COLUMNS = [
 ];
 
 export default async function Footer() {
-  const [footer, photos] = await Promise.all([getFooterSettings(), getWavePhotos()]);
+  const footer = await getFooterSettings();
   // The footer form saves a blank URL as "#"; showing an icon that goes
   // nowhere looked broken, so those are left out.
   const socialLinks = [
@@ -33,8 +31,8 @@ export default async function Footer() {
   ].filter(({ href }) => href && href !== "#");
 
   return (
-    <footer className="overflow-hidden bg-brand-dark text-white/70">
-      <div className="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+    <footer className="bg-brand-dark text-white/70">
+      <div className="mx-auto max-w-7xl px-4 pb-4 pt-20 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div data-reveal>
             <Image
@@ -129,8 +127,6 @@ export default async function Footer() {
           )}
         </div>
       </div>
-
-      <PhotoWave photos={photos} reverse className="pb-14 pt-6" />
     </footer>
   );
 }

@@ -157,8 +157,6 @@ model ActivityPhoto {
   caption    String?
   imageUrl   String
   order      Int              @default(0)
-  // Picked by an admin for the photo strips on the homepage and footer.
-  showOnHome Boolean          @default(false)
   categoryId Int
   category   ActivityCategory @relation(fields: [categoryId], references: [id])
   createdAt  DateTime         @default(now())

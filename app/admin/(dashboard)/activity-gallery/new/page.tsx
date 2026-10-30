@@ -58,10 +58,6 @@ export default async function NewActivityPhotoPage({
             </label>
             <input id="order" name="order" type="number" defaultValue={0} className={inputClass} />
           </div>
-          <div className="flex items-center gap-2">
-            <input id="showOnHome" name="showOnHome" type="checkbox" className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
-            <label htmlFor="showOnHome" className="text-sm text-slate-700">Tampilkan di pita foto beranda &amp; footer</label>
-          </div>
           <div>
             <label htmlFor="photo" className={labelClass}>Gambar</label>
             <ImageFileInput required className={fileInputClass} />

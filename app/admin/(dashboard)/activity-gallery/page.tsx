@@ -61,7 +61,6 @@ export default async function ActivityGalleryAdminPage({
               <th className="px-4 py-3">Keterangan</th>
               <th className="px-4 py-3">Kategori</th>
               <th className="px-4 py-3">Urutan</th>
-              <th className="px-4 py-3">Beranda</th>
               <th className="px-4 py-3 text-right">Aksi</th>
             </tr>
           </thead>
@@ -79,15 +78,6 @@ export default async function ActivityGalleryAdminPage({
                 </td>
                 <td className="px-4 py-3 text-slate-500">{item.order}</td>
                 <td className="px-4 py-3">
-                  {item.showOnHome ? (
-                    <span className="rounded bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
-                      Tampil
-                    </span>
-                  ) : (
-                    <span className="text-slate-300">-</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">
                   <div className="flex justify-end gap-2 whitespace-nowrap">
                     <Link
                       href={`/admin/activity-gallery/${item.id}`}
@@ -102,7 +92,7 @@ export default async function ActivityGalleryAdminPage({
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
                   Belum ada foto kegiatan. Tambahkan kategori terlebih dahulu di menu Kategori Kegiatan.
                 </td>
               </tr>

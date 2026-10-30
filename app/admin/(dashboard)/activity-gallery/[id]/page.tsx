@@ -60,10 +60,6 @@ export default async function EditActivityPhotoPage({
           </label>
           <input id="order" name="order" type="number" defaultValue={item.order} className={inputClass} />
         </div>
-        <div className="flex items-center gap-2">
-          <input id="showOnHome" name="showOnHome" type="checkbox" defaultChecked={item.showOnHome} className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand" />
-          <label htmlFor="showOnHome" className="text-sm text-slate-700">Tampilkan di pita foto beranda &amp; footer</label>
-        </div>
 
         <div>
           <span className={labelClass}>Gambar Saat Ini</span>

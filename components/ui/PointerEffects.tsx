@@ -8,46 +8,18 @@ const MAX_TILT_DEG = 4;
 const FOLLOW = 0.2;
 
 /**
- * Site-wide pointer and visibility effects, mounted once in the public
- * layout next to ScrollReveal:
+ * Site-wide pointer effects, mounted once in the public layout next to
+ * ScrollReveal:
  *  - `[data-tilt]` cards lean towards the pointer.
  *  - Over `[data-cursor="Label"]` a round badge with that label trails it.
- *  - `.marquee` strips pause while off screen.
  *
- * Pointer effects only run with a mouse or trackpad (`hover: hover` and
+ * They only run with a mouse or trackpad (`hover: hover` and
  * `pointer: fine`) and without reduced motion, and their animation frame
  * loop stops as soon as the badge has caught up — nothing runs while idle.
  */
 export default function PointerEffects() {
   const badgeRef = useRef<HTMLDivElement>(null);
   const [label, setLabel] = useState("");
-
-  // Pause off-screen strips. Runs everywhere: it saves the most on phones.
-  useEffect(() => {
-    const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        entry.target.classList.toggle("is-offscreen", !entry.isIntersecting);
-      }
-    });
-    const track = (root: ParentNode) =>
-      root.querySelectorAll(".marquee").forEach((el) => io.observe(el));
-    track(document);
-    // Client navigations add strips without remounting the layout.
-    const mo = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        m.addedNodes.forEach((node) => {
-          if (!(node instanceof Element)) return;
-          if (node.matches(".marquee")) io.observe(node);
-          track(node);
-        });
-      }
-    });
-    mo.observe(document.body, { childList: true, subtree: true });
-    return () => {
-      io.disconnect();
-      mo.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
