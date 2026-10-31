@@ -7,6 +7,7 @@ import ImageFileInput from "@/components/ui/ImageFileInput";
 import { fileInputClass, inputClass, labelClass, secondaryButtonClass } from "@/components/admin/formStyles";
 import { prisma } from "@/lib/prisma";
 import { updateActivityPhoto } from "../actions";
+import { ACTIVITY_PHOTO_REQUIREMENTS } from "../photo-requirements";
 import FormAlert from "@/components/ui/FormAlert";
 import SubmitButton from "@/components/ui/SubmitButton";
 import { parseId } from "@/lib/forms";
@@ -62,9 +63,13 @@ export default async function EditActivityPhotoPage({
         </div>
 
         <div>
-          <span className={labelClass}>Gambar Saat Ini</span>
-          <div className="relative h-16 w-16 overflow-hidden rounded-md bg-slate-100">
-            <Image src={item.imageUrl} alt={item.caption ?? "Foto kegiatan"} fill sizes="64px" className="object-cover" />
+          <span className={labelClass}>
+            Gambar Saat Ini{" "}
+            <span className="font-normal text-slate-400">(tampilan di carousel, 16:9)</span>
+          </span>
+          {/* Same frame and crop as the public carousel. */}
+          <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-xl bg-slate-100">
+            <Image src={item.imageUrl} alt={item.caption ?? "Foto kegiatan"} fill sizes="384px" className="object-cover" />
           </div>
         </div>
         <div>
@@ -72,13 +77,7 @@ export default async function EditActivityPhotoPage({
             Ganti Gambar <span className="font-normal text-slate-400">(kosongkan jika tidak diganti)</span>
           </label>
           <ImageFileInput className={fileInputClass} />
-          <PhotoRequirements
-            items={[
-              "Format: JPG, PNG, WEBP, atau GIF",
-              "Foto langsung dari kamera boleh (JPG/HEIC) — otomatis dikecilkan (maks. 60MB)",
-              "Rasio lanskap disarankan untuk tampilan carousel",
-            ]}
-          />
+          <PhotoRequirements items={ACTIVITY_PHOTO_REQUIREMENTS} />
         </div>
 
         <div className="flex gap-3 pt-2">

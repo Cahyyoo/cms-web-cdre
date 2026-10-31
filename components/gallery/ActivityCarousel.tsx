@@ -71,7 +71,11 @@ export default function ActivityCarousel({
                 src={photo.imageUrl}
                 alt={photo.caption ?? "Dokumentasi kegiatan"}
                 fill
-                sizes="(min-width: 1024px) 800px, 100vw"
+                // The rendered width inside app/(public)/(content)/layout.tsx:
+                // max-w-6xl (72rem) minus its px-4/sm:px-6/lg:px-8 padding.
+                // Under-stating it made browsers fetch an 828px variant and
+                // upscale it, so keep these in step with that layout.
+                sizes="(min-width: 1152px) 1088px, (min-width: 1024px) calc(100vw - 4rem), (min-width: 640px) calc(100vw - 3rem), calc(100vw - 2rem)"
                 className="object-cover"
                 priority={priority && i === 0}
               />

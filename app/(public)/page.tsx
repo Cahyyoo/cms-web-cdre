@@ -7,6 +7,7 @@ import RevealText from "@/components/ui/RevealText";
 import SectionBadge from "@/components/ui/SectionBadge";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { getHeroImageUrls } from "@/lib/hero-images";
+import { coverImageSizes, getLocalImageSize } from "@/lib/image-size";
 import { prisma } from "@/lib/prisma";
 import { getSambutan } from "@/lib/sambutan";
 
@@ -30,19 +31,24 @@ export default async function HomePage() {
     getHeroImageUrls(["HOME_HERO"]),
     getSambutan(),
   ]);
+  const heroSize = await getLocalImageSize(images.HOME_HERO);
 
   return (
     <div>
       {/* Hero */}
-      {/* The navbar floats over this section (NavbarShell), hence the full height. */}
-      <section className="relative flex min-h-[640px] w-full items-center overflow-hidden bg-brand-dark text-white sm:h-[100svh] sm:max-h-[980px]">
+      {/*
+        The navbar floats over this section (NavbarShell), hence the full
+        height. Phones get at least one screen too (growing if the copy needs
+        more), so the image's `sizes` can be worked out from 100vh.
+      */}
+      <section className="relative flex min-h-[max(640px,100svh)] w-full items-center overflow-hidden bg-brand-dark text-white sm:h-[100svh] sm:min-h-[640px] sm:max-h-[980px]">
         <div className="hero-parallax absolute inset-0">
           <Image
             src={images.HOME_HERO}
             alt="Kegiatan Sehat Bareng STARGATE bersama masyarakat"
             fill
             priority
-            sizes="100vw"
+            sizes={coverImageSizes(heroSize)}
             className="animate-hero-zoom object-cover"
           />
         </div>
